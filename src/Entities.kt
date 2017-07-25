@@ -1,16 +1,45 @@
 typealias Coord = Double
 
-data class FlowPoint(val point: Vector, val direction: Direction, val radius: Double) {
+open class AnchorPoint(val point: Vector, val radius: Double) {
 
-    constructor(x: Coord, y: Coord, degrees: Double, radius: Double) : this(Vector(x, y), Direction.fromDegrees(degrees), radius)
-    constructor(x: Int, y: Int, degrees: Int, radius: Int) : this(x.toDouble(), y.toDouble(), degrees.toDouble(), radius.toDouble())
+    constructor(x: Coord, y: Coord, radius: Double) : this(Vector(x, y), radius)
+    constructor(x: Int, y: Int, radius: Int) : this(x.toDouble(), y.toDouble(), radius.toDouble())
+
+}
+
+class FlowPoint(point: Vector, radius: Double, val direction: Direction) : AnchorPoint(point, radius) {
 
     fun distanceFromLine(point: Vector): Double {
-        val directional = Vector.radial(this.direction);
+        /*val directional = Vector.radial(this.direction);
         val a = directional.y;
         val b = -directional.x;
         val c = -a * this.point.x - b * this.point.y;
-        return Math.abs(a * point.x + b * point.y + c) / Math.sqrt(a * a + b * b);
+        return Math.abs(a * point.x + b * point.y + c) / Math.sqrt(a * a + b * b);*/
+        TODO()
+    }
+}
+
+data class FlowLine(val pa: AnchorPoint, val pb: AnchorPoint) {
+    fun nearestPoint(point: Vector): Vector {
+        val aToP = pa.point.vectorTo(point)
+        val aToB = pa.point.vectorTo(pb.point)
+        val atb2 = Math.pow(aToB.x, 2.0) + Math.pow(aToB.y, 2.0)
+        val atp_dot_atb = aToP.x * aToB.x + aToP.y * aToB.y
+
+        val t = Utils.toRange(atp_dot_atb / atb2, 0.0, 1.0)
+
+        return pa.point.plus(aToB.multiply(t))
+    }
+
+    fun nearestFlowPoint(point: Vector): FlowPoint {
+        val aToP = pa.point.vectorTo(point)
+        val aToB = pa.point.vectorTo(pb.point)
+        val atb2 = Math.pow(aToB.x, 2.0) + Math.pow(aToB.y, 2.0)
+        val atp_dot_atb = aToP.x * aToB.x + aToP.y * aToB.y
+
+        val t = Utils.toRange(atp_dot_atb / atb2, 0.0, 1.0)
+
+        return FlowPoint(pa.point.plus(aToB.multiply(t)), t * pb.radius + (1 - t) * pa.radius, aToB.direction())
     }
 }
 
@@ -29,6 +58,7 @@ data class Vector(val x: Coord = 0.0, val y: Coord = 0.0) {
     fun directionTo(point: Vector) = vectorTo(point).direction()
     fun plus(vector: Vector) = Vector(x + vector.x, y + vector.y)
     fun minus(vector: Vector) = Vector(x - vector.x, y - vector.y)
+    fun multiply(k: Double) = Vector(x * k, y * k)
     fun invert() = Vector(-x, -y)
 }
 
@@ -70,6 +100,7 @@ class Direction(value: Double) {
 
 object Utils {
     fun sign(value: Double) = if (value >= 0) 1 else -1
+    fun toRange(value: Double, min: Double, max: Double) = Math.min(Math.max(min, value), max)
 }
 
 class KotlinTest

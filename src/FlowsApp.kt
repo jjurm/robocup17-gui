@@ -4,7 +4,6 @@ import javafx.scene.Scene
 import javafx.scene.canvas.Canvas
 import javafx.scene.canvas.GraphicsContext
 import javafx.scene.paint.Color
-import javafx.scene.shape.ArcType
 import javafx.stage.Stage
 
 class FlowsApp : Application() {
@@ -14,15 +13,34 @@ class FlowsApp : Application() {
         }
 
         const val CANVAS_WIDTH = 600.0
-        const val CANVAS_HEIGHT = 400.0
+        const val CANVAS_HEIGHT = 500.0
         const val CANVAS_STEP = 12.0
 
     }
 
-    val flowPoints = mutableListOf<FlowPoint>(
-            FlowPoint(100, 80, 60, 75),
-            FlowPoint(120, 160, 30, 75)
+    val flowPoints = mutableListOf(
+            AnchorPoint(100, 80, 75),
+            AnchorPoint(77, 220, 75),
+            AnchorPoint(220, 360, 75),
+            AnchorPoint(410, 370, 150),
+            AnchorPoint(430, 350, 150),
+            AnchorPoint(420, 170, 30)
     )
+    val flowLines = flowPoints.mapIndexed { i, flowPoint -> FlowLine(flowPoint, flowPoints[(i + 1) % flowPoints.size]) }
+
+    fun calculateNearestFlowPoint(point: Vector): FlowPoint {
+        var distance: Double = Double.MAX_VALUE
+        var nearest: FlowPoint? = null
+        for (flowLine in flowLines) {
+            val np = flowLine.nearestFlowPoint(point)
+            val dst = point.distanceTo(np.point)
+            if (distance > point.distanceTo(np.point)) {
+                distance = dst
+                nearest = np
+            }
+        }
+        return nearest!!
+    }
 
     override fun start(primaryStage: Stage) {
         primaryStage.title = "Flows"
@@ -48,27 +66,26 @@ class FlowsApp : Application() {
                 val position = Vector(x, y)
 
                 var finalVector = Vector();
-                for (flowPoint in flowPoints) {
 
-                    val toFlowPoint = position.directionTo(flowPoint.point);
-                    val force = Math.abs(/*Math.cos(toFlowPoint.difference(flowPoint.direction))*/ 1) / Math.pow(flowPoint.point.distanceTo(position) / 100, 3.0);
+                val nearestFlowPoint = calculateNearestFlowPoint(position)
+                val toNearestFlowPoint = position.directionTo(nearestFlowPoint.point)
+                //val force = Math.abs(/*Math.cos(toFlowPoint.difference(flowPoint.direction))*/ 1) / Math.pow(flowPoint.point.distanceTo(position) / 100, 3.0);
 
-                    var flowDirection = toFlowPoint
-                    if (flowPoint.direction.difference(position.directionTo(flowPoint.point)) > Math.PI / 2) {
-                        // we are in front of the arrow, need to mirror the pull direction
-                        flowDirection = flowDirection.invert().mirrorWith(flowPoint.direction)
-                    }
-
-                    val d = flowPoint.point.distanceTo(position) / flowPoint.radius
-                    val relativeAngle = flowPoint.direction.invert().difference(toFlowPoint)
-                    var weight = calculateWeight(d)
-                    val NULL_ANGLE = 160.0
-                    weight *= Math.pow(Math.cos(relativeAngle / (NULL_ANGLE/90)), 1.0/2)
-                    //val weight = 0.0
-                    val pullDirection = flowPoint.direction.weightedAverageWith(toFlowPoint, weight)
-
-                    finalVector = finalVector.plus(Vector.radial(pullDirection, force));
+                var flowDirection = toNearestFlowPoint
+                if (toNearestFlowPoint.difference(position.directionTo(nearestFlowPoint.point)) > Math.PI / 2) {
+                    // we are in front of the arrow, need to mirror the pull direction
+                    flowDirection = flowDirection.invert().mirrorWith(nearestFlowPoint.direction)
                 }
+
+                val d = nearestFlowPoint.point.distanceTo(position) / nearestFlowPoint.radius
+                val relativeAngle = nearestFlowPoint.direction.invert().difference(toNearestFlowPoint)
+                var weight = calculateWeight(d)
+                val NULL_ANGLE = 180.0
+                weight *= Math.pow(Math.cos(relativeAngle / (NULL_ANGLE / 90)), 1.0 / 2)
+                //val weight = 0.0
+                val pullDirection = nearestFlowPoint.direction.weightedAverageWith(toNearestFlowPoint, weight)
+
+                finalVector = finalVector.plus(Vector.radial(pullDirection, 1.0));
 
                 val MARK_SIZE = 6.0
                 val drawVector = Vector.radial(finalVector.direction(), MARK_SIZE).invert();
@@ -89,31 +106,25 @@ class FlowsApp : Application() {
             x += CANVAS_STEP
         }
 
-        // Draw flow points
-        for (flowPoint in flowPoints) {
-            val SIZE = 15.0;
-            val offsetter = Vector.radial(flowPoint.direction, SIZE);
+
+        var i = 0;
+        while (i < flowPoints.size) {
+            val a = flowPoints[i]
+            val b = flowPoints[(i + 1) % flowPoints.size]
+            val SIZE = a.radius
 
             gc.stroke = Color.RED;
             gc.lineWidth = 2.0;
-            gc.beginPath();
-            val bottom = flowPoint.point.minus(offsetter);
-            gc.moveTo(bottom.x, bottom.y);
-            val top = flowPoint.point.plus(offsetter);
-            gc.lineTo(top.x, top.y);
-            gc.stroke();
+            gc.strokeOval(a.point.x - SIZE / 2, a.point.y - SIZE / 2, SIZE, SIZE)
 
-            gc.beginPath();
-            val left = top.minus(Vector.radial(flowPoint.direction.plus(Direction.fromDegrees(30.0)), SIZE));
-            val right = top.minus(Vector.radial(flowPoint.direction.minus(Direction.fromDegrees(30.0)), SIZE));
-            gc.moveTo(left.x, left.y);
-            gc.lineTo(top.x, top.y);
-            gc.lineTo(right.x, right.y);
-            gc.stroke();
+            gc.lineWidth = 1.0
+            gc.strokeLine(a.point.x, a.point.y, b.point.x, b.point.y)
+
+            i++
         }
 
 
     }
 
-    fun calculateWeight(ratio: Double) = 1-Math.pow(2.0, -ratio * ratio)
+    fun calculateWeight(ratio: Double) = 1 - Math.pow(2.0, -ratio * ratio)
 }
