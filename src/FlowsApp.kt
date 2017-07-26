@@ -21,24 +21,26 @@ class FlowsApp : Application() {
         const val IMG_HEIGHT = 260.0
         const val CANVAS_WIDTH = IMG_WIDTH * SCALE;
         const val CANVAS_HEIGHT = IMG_HEIGHT * SCALE;
-        const val CANVAS_STEP = 12.0
+        const val CANVAS_STEP = 8.0
+        const val BORDER_DISTANCE = 30.0
+        const val BORDER_COEFF_K = 20.0
     }
 
     val flowPoints = mutableListOf<AnchorPoint>()
     val flowLines: List<FlowLine>
 
     fun _anchor(x: Int, y: Int, radius: Int) {
-        flowPoints.add(AnchorPoint(x * SCALE, (IMG_HEIGHT - y) * SCALE, radius.toDouble()));
+        flowPoints.add(AnchorPoint(x, y, radius));
     }
 
     init {
-        _anchor(102, 44, 40);
-        _anchor(93, 58, 40);
-        _anchor(110, 190, 40);
-        _anchor(155, 210, 40);
-        _anchor(175, 195, 40);
-        _anchor(205, 113, 40);
-        _anchor(160, 40, 40);
+        _anchor(102, 44, 20);
+        _anchor(93, 58, 20);
+        _anchor(110, 190, 20);
+        _anchor(155, 210, 20);
+        _anchor(175, 195, 20);
+        _anchor(205, 113, 20);
+        _anchor(160, 40, 20);
 
 
         flowLines = flowPoints.mapIndexed { i, flowPoint -> FlowLine(flowPoint, flowPoints[(i + 1) % flowPoints.size]) }
@@ -83,6 +85,10 @@ class FlowsApp : Application() {
         primaryStage.show()
     }
 
+    private fun toCX(posX: Double): Double = posX * SCALE
+    private fun toCY(posY: Double): Double = CANVAS_HEIGHT - posY * SCALE
+    private fun toCR(r: Double) = r * SCALE
+
     private fun drawShapes(gc: GraphicsContext) {
         val image = javafx.scene.image.Image(FileInputStream("img.png"))
 
@@ -101,18 +107,18 @@ class FlowsApp : Application() {
 
                 val finalVector = calculateMoveVector(position)
 
-                val MARK_SIZE = 6.0
-                val drawVector = Vector.radial(finalVector.direction(), MARK_SIZE).invert();
+                val MARK_SIZE = 2.0
+                val drawVector = Vector.radial(finalVector.direction(), toCR(MARK_SIZE)).invert();
 
                 gc.lineWidth = 1.0
                 gc.stroke = Color.BLACK
-                val RADIUS = 1.0
-                gc.strokeOval(position.x, position.y, RADIUS, RADIUS);
+                val RADIUS = 2.0
+                gc.strokeOval(toCX(position.x) - toCR(RADIUS) / 2, toCY(position.y) - toCR(RADIUS) / 2, toCR(RADIUS), toCR(RADIUS));
 
-                gc.stroke = Color.GREY
+                gc.stroke = Color.rgb(100, 255, 100);
                 gc.beginPath();
-                gc.moveTo(position.x, position.y);
-                gc.lineTo(position.x + drawVector.x, position.y + drawVector.y);
+                gc.moveTo(toCX(position.x), toCY(position.y));
+                gc.lineTo(toCX(position.x + drawVector.x), toCY(position.y + drawVector.y));
                 gc.stroke();
 
                 y += CANVAS_STEP
@@ -129,20 +135,20 @@ class FlowsApp : Application() {
 
             gc.stroke = Color.RED;
             gc.lineWidth = 2.0;
-            gc.strokeOval(a.point.x - SIZE / 2, a.point.y - SIZE / 2, SIZE, SIZE)
+            gc.strokeOval(toCX(a.point.x) - toCR(SIZE) / 2, toCY(a.point.y) - toCR(SIZE) / 2, toCR(SIZE), toCR(SIZE))
 
             gc.lineWidth = 1.0
-            gc.strokeLine(a.point.x, a.point.y, b.point.x, b.point.y)
+            gc.strokeLine(toCX(a.point.x), toCY(a.point.y), toCX(b.point.x), toCY(b.point.y))
 
             i++
         }
-
-
     }
 
     private fun calculateMoveVector(position: Vector): Vector {
         val nearestFlowPoint = calculateNearestFlowPoint(position)
-        return influenceByFlowPoint(position, nearestFlowPoint)
+        val influenceByBorder = influenceByBorder(position)
+        val influence = influenceByFlowPoint(position, nearestFlowPoint).plus(influenceByBorder)
+        return influence
     }
 
     private fun influenceByFlowPoint(position: Vector, flowPoint: FlowPoint): Vector {
@@ -165,6 +171,21 @@ class FlowsApp : Application() {
         val pullDirection = flowPoint.direction.weightedAverageWith(toFlowPoint, weight)
 
         return Vector.radial(pullDirection, 1.0)
+    }
+
+    private fun influenceByBorder(position: Vector): Vector {
+        return Vector()
+                .plus(Vector.radial(Direction(0.0), forceOfBorder(position.x))) // left border
+                .plus(Vector.radial(Direction(Math.PI / 2), forceOfBorder(position.y))) // bottom border
+                .plus(Vector.radial(Direction(Math.PI), forceOfBorder(IMG_WIDTH - position.x))) // right border
+                .plus(Vector.radial(Direction(Math.PI * 3 / 2), forceOfBorder(IMG_HEIGHT - position.y))) // top border
+    }
+
+    private fun forceOfBorder(distance: Double): Double {
+        val a = BORDER_DISTANCE
+        val b = BORDER_COEFF_K
+        val x = distance
+        return Math.max(0.0, 2 * (Math.exp((-x) / b) - Math.exp((-a) / b)) / (1 - Math.exp((-a) / b)))
     }
 
 }
