@@ -9,6 +9,9 @@ open class AnchorPoint(val point: Vector, val radius: Double) {
 
 class FlowPoint(point: Vector, radius: Double, val direction: Direction) : AnchorPoint(point, radius) {
 
+    constructor(x: Coord, y: Coord, radius: Double, direction: Double) : this(Vector(x, y), radius, Direction.fromDegrees(direction))
+    constructor(x: Int, y: Int, radius: Int, direction: Int) : this(x.toDouble(), y.toDouble(), radius.toDouble(), direction.toDouble())
+
     fun distanceFromLine(point: Vector): Double {
         /*val directional = Vector.radial(this.direction);
         val a = directional.y;
