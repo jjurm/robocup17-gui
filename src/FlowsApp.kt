@@ -16,7 +16,7 @@ class FlowsApp : Application() {
             Application.launch(FlowsApp::class.java, *args)
         }
 
-        const val FILENAME = "map_tech.png";
+        const val FILENAME = "img.png";
         const val SCALE = 2.0;
         const val CANVAS_WIDTH = Flows.MAP_WIDTH * SCALE;
         const val CANVAS_HEIGHT = Flows.MAP_HEIGHT * SCALE;
@@ -43,20 +43,18 @@ class FlowsApp : Application() {
 
         root.children.add(text)
 
-
         primaryStage.scene = Scene(root)
         primaryStage.show()
     }
 
     private fun toCX(posX: Double): Double = posX * SCALE
+    private fun toCX(posX: Int): Double = posX * SCALE
     private fun toCY(posY: Double): Double = CANVAS_HEIGHT - posY * SCALE
+    private fun toCY(posY: Int): Double = CANVAS_HEIGHT - posY * SCALE
     private fun toCR(r: Double) = r * SCALE
+    private fun toCR(r: Int) = r * SCALE
 
-    private fun drawShapes(gc: GraphicsContext) {
-        val image = javafx.scene.image.Image(FileInputStream(FILENAME))
-
-        gc.drawImage(image, 0.0, 0.0, image.width, image.height, 0.0, 0.0, CANVAS_WIDTH, CANVAS_HEIGHT)
-
+    private fun drawEnv(gc: GraphicsContext, env: Environment) {
         gc.lineWidth = 2.0
         gc.stroke = Color.BLACK
         gc.strokeRect(0.0, 0.0, CANVAS_WIDTH, CANVAS_HEIGHT)
@@ -68,7 +66,7 @@ class FlowsApp : Application() {
             while (y < CANVAS_HEIGHT) {
                 val position = Vector(x, y)
 
-                val finalVector = Flows.calculateMoveVector(position)
+                val finalVector = Flows.calculateMoveVector(env, position)
 
                 val MARK_SIZE = 2.0
                 val drawVector = Vector.radial(finalVector.direction(), toCR(MARK_SIZE)).invert();
@@ -89,11 +87,11 @@ class FlowsApp : Application() {
             x += CANVAS_STEP
         }
 
-
+        // FlowLines
         var i = 0;
-        while (i < Flows.anchors.size) {
-            val a = Flows.anchors[i]
-            val b = Flows.anchors[(i + 1) % Flows.anchors.size]
+        while (i < env.anchors.size) {
+            val a = env.anchors[i]
+            val b = env.anchors[(i + 1) % env.anchors.size]
             val SIZE = a.radius
 
             gc.stroke = Color.RED;
@@ -106,10 +104,11 @@ class FlowsApp : Application() {
             i++
         }
 
+        // Radiuses
         gc.stroke = Color.RED;
         gc.lineWidth = 2.0;
         val SIZE = 10.0;
-        for (flowPoint in Flows.flowPoints) {
+        for (flowPoint in env.flowPoints) {
             val offsetter = Vector.radial(flowPoint.direction, SIZE);
 
             gc.beginPath();
@@ -132,6 +131,59 @@ class FlowsApp : Application() {
                     toCY(flowPoint.point.y) - toCR(flowPoint.radius) / 2,
                     toCR(flowPoint.radius),
                     toCR(flowPoint.radius))
+        }
+
+    }
+
+    private fun drawShapes(gc: GraphicsContext) {
+        val image = javafx.scene.image.Image(FileInputStream(FILENAME))
+        gc.drawImage(image, 0.0, 0.0, image.width, image.height, 0.0, 0.0, CANVAS_WIDTH, CANVAS_HEIGHT)
+        drawEnv(gc, Flows.environments.get(0))
+
+        // SuperobjectRules
+        for (rule in Flows.superobjectRules) {
+            gc.lineWidth = 2.0
+            gc.stroke = Color.BLUE
+            gc.drawArea(rule.area)
+            gc.stroke = Color.GREEN
+            gc.drawArea(rule.entry)
+            gc.drawRuleRoute(rule)
+        }
+
+        // Walls
+        for (wall in Flows.walls) {
+            gc.lineWidth = 3.0
+            gc.stroke = Color.VIOLET
+            gc.strokeLine(toCX(wall.a.x), toCY(wall.a.y), toCX(wall.b.x), toCY(wall.b.y))
+        }
+    }
+
+    private fun GraphicsContext.drawArea(r: Area) {
+        strokeRect(toCX(r.xa), toCY(maxOf(r.ya, r.yb)), toCR(r.xb - r.xa), toCR(Math.abs(r.yb - r.ya)))
+    }
+
+    private fun GraphicsContext.drawRoute(r: Route) {
+        var i = 0;
+        stroke = Color.ORANGE
+        while (i < r.points.size - 1) {
+            val pa = r.points.get(i)
+            val pb = r.points.get(i+1)
+            strokeLine(toCX(pa.x), toCY(pa.y), toCX(pb.x), toCY(pb.y))
+            i++
+        }
+    }
+
+    private fun GraphicsContext.drawRuleRoute(r: SuperobjectRule) {
+        stroke = Color.ORANGE
+        val list = mutableListOf(r.entry.center)
+        list.addAll(r.route.points)
+        list.add(r.area.center)
+        var i = 0;
+        while (i < list.size - 1) {
+            val pa = list.get(i)
+            val pb = list.get(i+1)
+            strokeLine(toCX(pa.x), toCY(pa.y), toCX(pb.x), toCY(pb.y))
+            i++
         }
     }
 

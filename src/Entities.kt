@@ -1,28 +1,20 @@
 typealias Coord = Double
 
-open class AnchorPoint(val point: Vector, val radius: Double) {
+open class Anchor(val point: Vector, val radius: Double) {
 
     constructor(x: Coord, y: Coord, radius: Double) : this(Vector(x, y), radius)
     constructor(x: Int, y: Int, radius: Int) : this(x.toDouble(), y.toDouble(), radius.toDouble())
 
 }
 
-class FlowPoint(point: Vector, radius: Double, val direction: Direction) : AnchorPoint(point, radius) {
+class FlowPoint(point: Vector, radius: Double, val direction: Direction) : Anchor(point, radius) {
 
     constructor(x: Coord, y: Coord, radius: Double, direction: Double) : this(Vector(x, y), radius, Direction.fromDegrees(direction))
     constructor(x: Int, y: Int, radius: Int, direction: Int) : this(x.toDouble(), y.toDouble(), radius.toDouble(), direction.toDouble())
 
-    fun distanceFromLine(point: Vector): Double {
-        /*val directional = Vector.radial(this.direction);
-        val a = directional.y;
-        val b = -directional.x;
-        val c = -a * this.point.x - b * this.point.y;
-        return Math.abs(a * point.x + b * point.y + c) / Math.sqrt(a * a + b * b);*/
-        TODO()
-    }
 }
 
-data class FlowLine(val pa: AnchorPoint, val pb: AnchorPoint) {
+data class FlowLine(val pa: Anchor, val pb: Anchor) {
     fun nearestPoint(point: Vector): Vector {
         val aToP = pa.point.vectorTo(point)
         val aToB = pa.point.vectorTo(pb.point)
@@ -53,6 +45,8 @@ data class Vector(val x: Coord = 0.0, val y: Coord = 0.0) {
                 Math.sin(direction.value) * size
         )
     }
+
+    constructor(x: Int, y: Int) : this(x.toDouble(), y.toDouble())
 
     fun size() = Math.sqrt(x * x + y * y)
     fun vectorTo(point: Vector) = Vector(point.x - x, point.y - y)
@@ -100,6 +94,50 @@ class Direction(value: Double) {
     fun weightedAverageWith(direction: Direction, weight: Double)
             = Vector.radial(this, 1 - weight).plus(Vector.radial(direction, weight)).direction()
 }
+
+class Area(xa: Int, ya: Int, xb: Int, yb: Int) {
+    var xa: Int
+    var ya: Int
+    var xb: Int
+    var yb: Int
+
+    val centerX
+        get() = (xa + xb) / 2
+    val centerY
+        get() = (ya + yb) / 2
+    val center
+        get() = Vector(centerX, centerY)
+
+    init {
+        this.xa = minOf(xa, xb)
+        this.ya = minOf(ya, yb)
+        this.xb = maxOf(xa, xb)
+        this.yb = maxOf(ya, yb)
+    }
+}
+
+data class Environment(
+        var anchors: MutableList<Anchor>,
+        var flowLines: MutableList<FlowLine>,
+        var flowPoints: MutableList<FlowPoint>
+) {
+    constructor() : this(mutableListOf(), mutableListOf(), mutableListOf())
+}
+
+class Route() {
+    var points: MutableList<Vector> = mutableListOf()
+}
+
+data class Wall(
+        var a: Vector,
+        var b: Vector
+)
+
+data class SuperobjectRule(
+        var area: Area,
+        var entry: Area,
+        var route: Route
+)
 
 object Utils {
     fun sign(value: Double) = if (value >= 0) 1 else -1

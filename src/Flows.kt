@@ -7,40 +7,47 @@ object Flows {
     const val DISCRETE_FLOWPOINT_FORCE = 2.0
     const val E_A = 0
 
-    val anchors = mutableListOf<AnchorPoint>()
-    val flowLines: MutableList<FlowLine>
-    val flowPoints = mutableListOf<FlowPoint>()
+    val environments = mutableListOf(Environment())
+    val superobjectRules = mutableListOf<SuperobjectRule>()
+    val walls = mutableListOf<Wall>()
+
+    init {
+        _init_values()
+        for (env in environments) {
+            env.flowLines = env.anchors.mapIndexed { i, flowPoint -> FlowLine(flowPoint, env.anchors[(i + 1) % env.anchors.size]) }.toMutableList()
+            // remove cyclic FlowLine:
+            //env.flowLines.removeAt(env.flowLines.size - 1);
+        }
+    }
 
     fun _anchor(env: Int, x: Int, y: Int, radius: Int) {
-        anchors.add(AnchorPoint(x, y, radius));
+        environments.get(env).anchors.add(Anchor(x, y, radius));
     }
 
     fun _flowPoint(env: Int, x: Int, y: Int, radius: Int, direction: Int) {
-        flowPoints.add(FlowPoint(x, y, radius, direction))
+        environments.get(env).flowPoints.add(FlowPoint(x, y, radius, direction))
     }
 
-    init {
-        /*_anchor(E_A, 88, 58, 20);
-        _anchor(E_A, 102, 145, 10);
-        _anchor(E_A, 90, 200, 35);
-        _anchor(E_A, 197, 244, 4);
-        _anchor(E_A, 280, 242, 4);
-        _anchor(E_A, 292, 134, 20);
-        _anchor(E_A, 337, 90, 4);
-        _anchor(E_A, 337, 24, 4);
-        _anchor(E_A, 190, 26, 20);*/
-        _anchor(E_A, 100, 100, 4);
-        _anchor(E_A, 200, 140, 40);
-        //_flowPoint(E_A, 10, 165, 60, 80);
-
-        flowLines = anchors.mapIndexed { i, flowPoint -> FlowLine(flowPoint, anchors[(i + 1) % anchors.size]) }.toMutableList()
-        flowLines.removeAt(flowLines.size-1);
+    fun _rule(aXa: Int, aYa: Int, aXb: Int, aYb: Int, eXa: Int, eYa: Int, eXb: Int, eYb: Int) {
+        superobjectRules.add(SuperobjectRule(
+                Area(aXa, aYa, aXb, aYb),
+                Area(eXa, eYa, eXb, eYb),
+                Route()
+        ));
     }
 
-    fun calculateNearestFlowPoint(point: Vector): FlowPoint {
+    fun _rule_route_point(x: Int, y: Int) {
+        superobjectRules.last().route.points.add(Vector(x, y))
+    }
+
+    fun _wall(ax: Int, ay: Int, bx: Int, by: Int) {
+        walls.add(Wall(Vector(ax, ay), Vector(bx, by)))
+    };
+
+    fun calculateNearestFlowPoint(env: Environment, point: Vector): FlowPoint {
         var distance: Double = Double.MAX_VALUE
         var nearest: FlowPoint? = null
-        for (flowLine in flowLines) {
+        for (flowLine in env.flowLines) {
             val np = flowLine.nearestFlowPoint(point)
             val dst = point.distanceTo(np.point)
             if (distance > point.distanceTo(np.point)) {
@@ -97,9 +104,9 @@ object Flows {
                 .plus(Vector.radial(Direction(Math.PI * 3 / 2), forceOfBorder(MAP_HEIGHT - position.y))) // top border
     }
 
-    fun influenceByDiscreteFlowPoints(position: Vector): Vector {
+    fun influenceByDiscreteFlowPoints(env: Environment, position: Vector): Vector {
         var sum = Vector();
-        for (flowPoint in flowPoints) {
+        for (flowPoint in env.flowPoints) {
             sum = sum.plus(influenceByDiscreteFlowPoint(position, flowPoint));
         }
         return sum;
@@ -109,12 +116,12 @@ object Flows {
         return Vector.radial(flowPoint.direction, DISCRETE_FLOWPOINT_FORCE * forceOfFlowPoint(flowPoint, position.distanceTo(flowPoint.point)))
     }
 
-    fun calculateMoveVector(position: Vector): Vector {
-        val nearestFlowPoint = calculateNearestFlowPoint(position);
+    fun calculateMoveVector(env: Environment, position: Vector): Vector {
+        val nearestFlowPoint = calculateNearestFlowPoint(env, position);
         val infFlowPoint = influenceByFlowPoint(position, nearestFlowPoint);
         //val infFlowPoint = influenceByFlowPointForSuperobject(position, nearestFlowPoint, flowLines[0]);
         val infBorders = influenceByBorders(position);
-        val infDiscretes = influenceByDiscreteFlowPoints(position);
+        val infDiscretes = influenceByDiscreteFlowPoints(env, position);
         return infFlowPoint.plus(infBorders).plus(infDiscretes)
     }
 
