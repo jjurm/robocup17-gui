@@ -116,16 +116,19 @@ class Area(xa: Int, ya: Int, xb: Int, yb: Int) {
     }
 }
 
-data class Environment(
-        var anchors: MutableList<Anchor>,
-        var flowLines: MutableList<FlowLine>,
-        var flowPoints: MutableList<FlowPoint>
-) {
-    constructor() : this(mutableListOf(), mutableListOf(), mutableListOf())
+class Environment(var randomnessSize: Double) {
+    var anchors: MutableList<Anchor> = mutableListOf()
+    var flowLines: MutableList<FlowLine> = mutableListOf()
+    var flowPoints: MutableList<FlowPoint> = mutableListOf()
+    var flowRoutes: MutableList<FlowRoute> = mutableListOf()
 }
 
 class Route() {
     var points: MutableList<Vector> = mutableListOf()
+}
+
+class FlowRoute() {
+    var points: MutableList<Anchor> = mutableListOf()
 }
 
 data class Wall(
@@ -138,6 +141,11 @@ data class SuperobjectRule(
         var entry: Area,
         var route: Route
 )
+
+class FlowPointAndLine(val flowPoint: FlowPoint?, val flowLine: FlowLine?) {
+    operator fun component1() = flowPoint
+    operator fun component2() = flowLine
+}
 
 object Utils {
     fun sign(value: Double) = if (value >= 0) 1 else -1

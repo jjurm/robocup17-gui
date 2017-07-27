@@ -54,6 +54,29 @@ class FlowsApp : Application() {
     private fun toCR(r: Double) = r * SCALE
     private fun toCR(r: Int) = r * SCALE
 
+    private fun drawShapes(gc: GraphicsContext) {
+        val image = javafx.scene.image.Image(FileInputStream(FILENAME))
+        gc.drawImage(image, 0.0, 0.0, image.width, image.height, 0.0, 0.0, CANVAS_WIDTH, CANVAS_HEIGHT)
+        drawEnv(gc, Flows.environments.get(DRAW_ENVIRONMENT))
+
+        // SuperobjectRules
+        for (rule in Flows.superobjectRules) {
+            gc.lineWidth = 2.0
+            gc.stroke = Color.BLUE
+            gc.drawArea(rule.area)
+            gc.stroke = Color.GREEN
+            gc.drawArea(rule.entry)
+            gc.drawRuleRoute(rule)
+        }
+
+        // Walls
+        for (wall in Flows.walls) {
+            gc.lineWidth = 3.0
+            gc.stroke = Color.VIOLET
+            gc.strokeLine(toCX(wall.a.x), toCY(wall.a.y), toCX(wall.b.x), toCY(wall.b.y))
+        }
+    }
+
     private fun drawEnv(gc: GraphicsContext, env: Environment) {
         gc.lineWidth = 2.0
         gc.stroke = Color.BLACK
@@ -92,11 +115,10 @@ class FlowsApp : Application() {
         while (i < env.anchors.size) {
             val a = env.anchors[i]
             val b = env.anchors[(i + 1) % env.anchors.size]
-            val SIZE = a.radius
 
             gc.stroke = Color.RED;
             gc.lineWidth = 2.0;
-            gc.strokeOval(toCX(a.point.x) - toCR(SIZE) / 2, toCY(a.point.y) - toCR(SIZE) / 2, toCR(SIZE), toCR(SIZE))
+            gc.drawAnchor(a)
 
             gc.lineWidth = 1.0
             gc.strokeLine(toCX(a.point.x), toCY(a.point.y), toCX(b.point.x), toCY(b.point.y))
@@ -133,28 +155,27 @@ class FlowsApp : Application() {
                     toCR(flowPoint.radius))
         }
 
-    }
+        // FlowRoutes
+        for (flowRoute in env.flowRoutes) {
 
-    private fun drawShapes(gc: GraphicsContext) {
-        val image = javafx.scene.image.Image(FileInputStream(FILENAME))
-        gc.drawImage(image, 0.0, 0.0, image.width, image.height, 0.0, 0.0, CANVAS_WIDTH, CANVAS_HEIGHT)
-        drawEnv(gc, Flows.environments.get(0))
+            i = 0;
+            while (i < flowRoute.points.size-1) {
+                val a = flowRoute.points[i]
+                val b = flowRoute.points[i+1]
 
-        // SuperobjectRules
-        for (rule in Flows.superobjectRules) {
-            gc.lineWidth = 2.0
-            gc.stroke = Color.BLUE
-            gc.drawArea(rule.area)
-            gc.stroke = Color.GREEN
-            gc.drawArea(rule.entry)
-            gc.drawRuleRoute(rule)
-        }
+                gc.stroke = Color.AQUA;
+                gc.lineWidth = 2.0;
+                gc.drawAnchor(a)
+                if (i+2 == flowRoute.points.size) {
+                    gc.drawAnchor(b)
+                }
 
-        // Walls
-        for (wall in Flows.walls) {
-            gc.lineWidth = 3.0
-            gc.stroke = Color.VIOLET
-            gc.strokeLine(toCX(wall.a.x), toCY(wall.a.y), toCX(wall.b.x), toCY(wall.b.y))
+                gc.lineWidth = 1.0
+                gc.strokeLine(toCX(a.point.x), toCY(a.point.y), toCX(b.point.x), toCY(b.point.y))
+
+                i++
+            }
+
         }
     }
 
@@ -185,6 +206,10 @@ class FlowsApp : Application() {
             strokeLine(toCX(pa.x), toCY(pa.y), toCX(pb.x), toCY(pb.y))
             i++
         }
+    }
+
+    private fun GraphicsContext.drawAnchor(o: Anchor) {
+        strokeOval(toCX(o.point.x) - toCR(o.radius) / 2, toCY(o.point.y) - toCR(o.radius) / 2, toCR(o.radius), toCR(o.radius))
     }
 
 }

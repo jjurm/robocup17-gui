@@ -7,7 +7,7 @@ object Flows {
     const val DISCRETE_FLOWPOINT_FORCE = 2.0
     const val E_A = 0
 
-    val environments = mutableListOf(Environment())
+    val environments = mutableListOf<Environment>()
     val superobjectRules = mutableListOf<SuperobjectRule>()
     val walls = mutableListOf<Wall>()
 
@@ -15,17 +15,19 @@ object Flows {
         _init_values()
         for (env in environments) {
             env.flowLines = env.anchors.mapIndexed { i, flowPoint -> FlowLine(flowPoint, env.anchors[(i + 1) % env.anchors.size]) }.toMutableList()
-            // remove cyclic FlowLine:
-            //env.flowLines.removeAt(env.flowLines.size - 1);
         }
     }
 
-    fun _anchor(env: Int, x: Int, y: Int, radius: Int) {
-        environments.get(env).anchors.add(Anchor(x, y, radius));
+    fun _environment(randomnessSize: Double) { // _environment must be defined before _anchor, _flowPoint
+        environments.add(Environment(randomnessSize))
     }
 
-    fun _flowPoint(env: Int, x: Int, y: Int, radius: Int, direction: Int) {
-        environments.get(env).flowPoints.add(FlowPoint(x, y, radius, direction))
+    fun _anchor(x: Int, y: Int, radius: Int) {
+        environments.last().anchors.add(Anchor(x, y, radius));
+    }
+
+    fun _flowPoint(x: Int, y: Int, radius: Int, direction: Int) {
+        environments.last().flowPoints.add(FlowPoint(x, y, radius, direction))
     }
 
     fun _rule(aXa: Int, aYa: Int, aXb: Int, aYb: Int, eXa: Int, eYa: Int, eXb: Int, eYb: Int) {
@@ -44,7 +46,15 @@ object Flows {
         walls.add(Wall(Vector(ax, ay), Vector(bx, by)))
     };
 
-    fun calculateNearestFlowPoint(env: Environment, point: Vector): FlowPoint {
+    fun _environment_route() {
+        environments.last().flowRoutes.add(FlowRoute())
+    }
+
+    fun _environment_route_point(x: Int, y: Int, radius: Int) {
+        environments.last().flowRoutes.last().points.add(Anchor(x, y, radius))
+    }
+
+    fun calculateNearestFlowPoint(env: Environment, point: Vector): FlowPoint? {
         var distance: Double = Double.MAX_VALUE
         var nearest: FlowPoint? = null
         for (flowLine in env.flowLines) {
@@ -55,10 +65,30 @@ object Flows {
                 nearest = np
             }
         }
-        return nearest!!
+        return nearest
     }
 
-    fun influenceByFlowPoint(position: Vector, flowPoint: FlowPoint): Vector {
+    fun calculateNearestFlowRoutePoint(flowRoute: FlowRoute, point: Vector): FlowPointAndLine {
+        var distance: Double = Double.MAX_VALUE
+        var nearest: FlowPoint? = null
+        var line: FlowLine? = null
+        var i = 0
+        while (i < flowRoute.points.size-1) {
+            val flowLine = FlowLine(flowRoute.points[i], flowRoute.points[i+1])
+            val np = flowLine.nearestFlowPoint(point)
+            val dst = point.distanceTo(np.point)
+            if (distance > point.distanceTo(np.point)) {
+                distance = dst
+                nearest = np
+                line = flowLine
+            }
+            i++
+        }
+        return FlowPointAndLine(nearest, line)
+    }
+
+    fun influenceByFlowPoint(position: Vector, flowPoint: FlowPoint?): Vector {
+        if (flowPoint == null) return Vector();
         val toFlowPoint = position.directionTo(flowPoint.point)
         //val force = Math.abs(/*Math.cos(toFlowPoint.difference(flowPoint.direction))*/ 1) / Math.pow(flowPoint.point.distanceTo(position) / 100, 3.0);
 
@@ -80,7 +110,7 @@ object Flows {
         return Vector.radial(pullDirection, 1.0)
     }
 
-    fun influenceByFlowPointForSuperobject(position: Vector, flowPoint: FlowPoint, flowLine: FlowLine): Vector {
+    fun influenceByFlowPointWithEnd(position: Vector, flowPoint: FlowPoint, flowLine: FlowLine): Vector {
         val toFlowPoint = position.directionTo(flowPoint.point)
 
         val d = flowPoint.point.distanceTo(position) / flowPoint.radius
@@ -116,13 +146,32 @@ object Flows {
         return Vector.radial(flowPoint.direction, DISCRETE_FLOWPOINT_FORCE * forceOfFlowPoint(flowPoint, position.distanceTo(flowPoint.point)))
     }
 
+    fun influenceByRoute(position: Vector, route: FlowRoute): Vector {
+        val (nearest, line) = calculateNearestFlowRoutePoint(route, position)
+        if (nearest == null || line == null) return Vector()
+        if (line.pb == route.points.last()) {
+            return influenceByFlowPointWithEnd(position, nearest, line)
+        } else {
+            return influenceByFlowPoint(position, nearest)
+        }
+    }
+
+    fun influenceByRoutes(env: Environment, position: Vector): Vector {
+        var sum = Vector()
+        for (flowRoute in env.flowRoutes) {
+            sum = sum.plus(influenceByRoute(position, flowRoute));
+        }
+        return sum
+    }
+
     fun calculateMoveVector(env: Environment, position: Vector): Vector {
         val nearestFlowPoint = calculateNearestFlowPoint(env, position);
         val infFlowPoint = influenceByFlowPoint(position, nearestFlowPoint);
         //val infFlowPoint = influenceByFlowPointForSuperobject(position, nearestFlowPoint, flowLines[0]);
         val infBorders = influenceByBorders(position);
         val infDiscretes = influenceByDiscreteFlowPoints(env, position);
-        return infFlowPoint.plus(infBorders).plus(infDiscretes)
+        val infRoutes = influenceByRoutes(env, position)
+        return infFlowPoint.plus(infBorders).plus(infDiscretes).plus(infRoutes)
     }
 
     fun forceOfBorder(distance: Double): Double {
