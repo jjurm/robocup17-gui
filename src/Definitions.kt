@@ -1,4 +1,4 @@
-const val DRAW_ENVIRONMENT = 0
+const val DRAW_ENVIRONMENT =1
 const val STD_RANDOMNESS = 0.1
 
 fun Flows._init_values() {
@@ -85,6 +85,13 @@ fun Flows._init_values() {
     _wall(192,199,165,198);
     _wall(165,198,219,141);
     _wall(219,141,163,197);
+
+    //Quick areas
+    _area(97	,	194	,	161	,	54);
+    _area(0	,	80	,	359	,	0);
+    _area(236	,	226	,	270	,	66);
+    _area(119	,	226	,	269	,	200);
+
 
     // ===== ENVIRONMENT: deposit
     _environment(0.0);
