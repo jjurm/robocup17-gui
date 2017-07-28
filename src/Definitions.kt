@@ -1,4 +1,4 @@
-const val DRAW_ENVIRONMENT = 1
+const val DRAW_ENVIRONMENT = 0
 
 fun Flows._init_values() {
 

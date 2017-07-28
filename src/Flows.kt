@@ -1,7 +1,7 @@
 object Flows {
 
-    const val MAP_WIDTH = 350.0
-    const val MAP_HEIGHT = 260.0
+    const val MAP_WIDTH = 360.0
+    const val MAP_HEIGHT = 270.0
     const val BORDER_DISTANCE = 20.0
     const val BORDER_COEFF_K = 16.0
     const val DISCRETE_FLOWPOINT_FORCE = 2.0
