@@ -127,7 +127,7 @@ class Route() {
     var points: MutableList<Vector> = mutableListOf()
 }
 
-class FlowRoute() {
+class FlowRoute(val withEnd: Boolean) {
     var points: MutableList<Anchor> = mutableListOf()
 }
 

@@ -46,8 +46,8 @@ object Flows {
         walls.add(Wall(Vector(ax, ay), Vector(bx, by)))
     };
 
-    fun _environment_route() {
-        environments.last().flowRoutes.add(FlowRoute())
+    fun _environment_route(withEnd: Boolean) {
+        environments.last().flowRoutes.add(FlowRoute(withEnd))
     }
 
     fun _environment_route_point(x: Int, y: Int, radius: Int) {
@@ -73,8 +73,8 @@ object Flows {
         var nearest: FlowPoint? = null
         var line: FlowLine? = null
         var i = 0
-        while (i < flowRoute.points.size-1) {
-            val flowLine = FlowLine(flowRoute.points[i], flowRoute.points[i+1])
+        while (i < flowRoute.points.size - 1) {
+            val flowLine = FlowLine(flowRoute.points[i], flowRoute.points[i + 1])
             val np = flowLine.nearestFlowPoint(point)
             val dst = point.distanceTo(np.point)
             if (distance > point.distanceTo(np.point)) {
@@ -100,14 +100,16 @@ object Flows {
             flowDirection = flowDirection.invert().mirrorWith(flowPoint.direction)
         }*/
 
-        val d = flowPoint.point.distanceTo(position) / flowPoint.radius
+        val distance = flowPoint.point.distanceTo(position)
+        val d = distance / flowPoint.radius
         val relativeAngle = flowPoint.direction.invert().difference(toFlowPoint)
         var weight = 1 - Math.pow(2.0, -d * d)
-        weight *= Math.pow(Math.cos(relativeAngle / 2), 1.0 / 2)
-        //val weight = 0.0
+        //weight *= Math.pow(Math.cos(relativeAngle / 2), 1.0 / 2)
+        weight *= (-relativeAngle) / Math.PI + 1
         val pullDirection = flowPoint.direction.weightedAverageWith(toFlowPoint, weight)
 
-        return Vector.radial(pullDirection, 1.0)
+        val size = 1 / (distance / 10 + 1)
+        return Vector.radial(pullDirection, size)
     }
 
     fun influenceByFlowPointWithEnd(position: Vector, flowPoint: FlowPoint, flowLine: FlowLine): Vector {
@@ -149,7 +151,7 @@ object Flows {
     fun influenceByRoute(position: Vector, route: FlowRoute): Vector {
         val (nearest, line) = calculateNearestFlowRoutePoint(route, position)
         if (nearest == null || line == null) return Vector()
-        if (line.pb == route.points.last()) {
+        if (route.withEnd && line.pb == route.points.last()) {
             return influenceByFlowPointWithEnd(position, nearest, line)
         } else {
             return influenceByFlowPoint(position, nearest)
