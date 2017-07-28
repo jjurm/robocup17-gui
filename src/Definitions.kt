@@ -1,4 +1,4 @@
-const val DRAW_ENVIRONMENT =3
+const val DRAW_ENVIRONMENT =0
 const val STD_RANDOMNESS = 0.1
 
 fun Flows._init_values() {
@@ -163,14 +163,19 @@ fun Flows._init_values() {
 
     _environment_route(false);
     _environment_route_point(121, 217, 10);
-    _environment_route_point(143, 105, 40);
-    _environment_route_point(238, 104, 30);
+    _environment_route_point(232,221,13);
+    _environment_route_point(276,251,30);
+    _environment_route_point(333,244,20);
+    _environment_route_point(261,188,10);
     _environment_route_point(258, 162, 6);
     _environment_route_point(303, 143, 4);
     _environment_route_point(340, 118, 35);
     _environment_route_point(344,100, 10);
 
-    _flowPoint(315, 219, 60, 170);
+    _flowPoint(166, 166, 19, -100);
+    _flowPoint(177, 240, 35, -90);
+    _flowPoint(133, 243, 35, -90);
+    _flowPoint(129, 147, 60, -90);
     _flowPoint(308, 179, 27, 140);
     _flowPoint(21,183, 20, 40);
     _flowPoint(62, 115, 32, -103);
@@ -186,6 +191,12 @@ fun Flows._init_values() {
     _environment_route_point(336, 51, 6);
     _environment_route_point(242, 70, 10);
     _environment_route_point(239,103, 15);
+    _environment_route_point(258,162, 6);
+
+    _environment_route(false);
+    _environment_route_point(21, 75, 6);
+    _environment_route_point(145, 75, 10);
+    _environment_route_point(238, 103, 13);
 
     // ===== ENVIRONMENT: normal 3
     _environment(STD_RANDOMNESS);
