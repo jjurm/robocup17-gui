@@ -120,19 +120,22 @@ fun Flows._init_values() {
     _environment_route_point(178, 249, 6);
 
     _flowPoint(20, 66, 20, 60);
-    _flowPoint(85, 110, 23, -125);
+    _flowPoint(85, 102, 23, -125);
     _flowPoint(69, 144, 15, -135);
-    _flowPoint(129, 238, 30, -95);
-    _flowPoint(234, 240, 30, -80);
+    _flowPoint(135, 242, 35, -120);
+    _flowPoint(222, 238, 33, -70);
     _flowPoint(296, 29, 20, 100);
     _flowPoint(321, 228, 38, -170);
     _flowPoint(285, 122, 16, 70);
     _flowPoint(160, 49, 24, -165);
     _flowPoint(73, 35, 15, -90);
-    _flowPoint(228, 137, 24, 0);
+    _flowPoint(228, 137, 24, -10);
     _flowPoint(177, 144, 24, -130);
     _flowPoint(333, 68, 16, -80);
-    _flowPoint(169,167,20, -140);
+    _flowPoint(169, 167, 20, -140);
+    _flowPoint(337, 190, 24, 135);
+    _flowPoint(298,174, 20, 140);
+    _flowPoint(23, 192, 20, 40);
 
     // ===== ENVIRONMENT: normal 1
     _environment(STD_RANDOMNESS);
@@ -167,41 +170,53 @@ fun Flows._init_values() {
 
     _environment_route(false);
     _environment_route_point(121, 217, 10);
-    _environment_route_point(232,221,13);
-    _environment_route_point(276,251,30);
-    _environment_route_point(333,244,20);
-    _environment_route_point(261,188,10);
-    _environment_route_point(258, 162, 6);
+    _environment_route_point(226, 215, 13);
+    _environment_route_point(268, 259, 27);
+    _environment_route_point(333, 244, 28);
+    _environment_route_point(323, 214, 14);
+    _environment_route_point(261, 188, 10);
+    _environment_route_point(252, 154, 6);
     _environment_route_point(303, 143, 4);
     _environment_route_point(340, 118, 35);
     _environment_route_point(344, 100, 10);
 
-    _flowPoint(166, 166, 19, -100);
-    _flowPoint(177, 240, 35, -90);
-    _flowPoint(133, 243, 35, -90);
-    _flowPoint(129, 147, 60, -90);
-    _flowPoint(308, 179, 27, 140);
+    _flowPoint(166, 166, 19, 150);
+    _flowPoint(180, 240, 35, -110);
+    _flowPoint(133, 240, 35, -110);
+    _flowPoint(129, 147, 60, 90);
+    _flowPoint(303, 177, 25, 140);
     _flowPoint(21, 183, 20, 40);
     _flowPoint(62, 115, 32, -103);
-    _flowPoint(82, 25, 37, -25);
-    _flowPoint(86, 154, 20, 45);
+    _flowPoint(54, 20, 37, -30);
+    _flowPoint(92, 154, 20, 45);
     _flowPoint(191, 145, 20, -100);
     _flowPoint(216, 189, 22, 70);
-    _flowPoint(165, 142, 20, -130);
+    _flowPoint(165, 135, 20, 125);
     _flowPoint(305, 102, 23, 40);
-    _flowPoint(178, 192, 29, 140);
+    _flowPoint(170, 192, 30, 130);
+    _flowPoint(284, 233, 15, 40);
+    _flowPoint(336, 192, 12, 140);
+    _flowPoint(220, 134, 13, -80);
+    _flowPoint(80, 93, 18, -120);
+    _flowPoint(289, 165, 15, -135);
+    _flowPoint(245, 224, 25, 95);
 
     _environment_route(false);
     _environment_route_point(340, 28, 6);
     _environment_route_point(336, 51, 6);
     _environment_route_point(242, 70, 10);
-    _environment_route_point(239,103, 15);
-    _environment_route_point(258,162, 6);
+    _environment_route_point(239, 103, 15);
+    _environment_route_point(258, 162, 6);
 
     _environment_route(false);
     _environment_route_point(21, 75, 6);
-    _environment_route_point(145, 75, 10);
-    _environment_route_point(238, 103, 13);
+    _environment_route_point(113, 75, 10);
+    _environment_route_point(248, 103, 13);
+
+    _environment_route(false);
+    _environment_route_point(20, 16, 10);
+    _environment_route_point(125, 17, 8);
+    _environment_route_point(146, 88, 16);
 
     // ===== ENVIRONMENT: normal 3
     _environment(STD_RANDOMNESS);
