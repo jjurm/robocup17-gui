@@ -1,4 +1,5 @@
-const val DRAW_ENVIRONMENT = 3
+const val DRAW_ENVIRONMENT = 0
+const val STD_RANDOMNESS = 0.1
 
 fun Flows._init_values() {
 
@@ -86,19 +87,19 @@ fun Flows._init_values() {
     _wall(219,141,163,197);
 
     // ===== ENVIRONMENT: deposit
-    _environment(0.1);
+    _environment(0.0);
 
     _environment_route(false);
     _environment_route_point(23, 144, 8);
     _environment_route_point(72, 76, 8);
-    _environment_route_point(130, 60, 12);
+    _environment_route_point(130, 68, 12);
     _environment_route_point(127, 27, 10);
     _environment_route_point(20, 15, 4);
 
     _environment_route(false);
     _environment_route_point(133,118, 10);
     _environment_route_point(282, 59, 10);
-    _environment_route_point(343, 53, 8);
+    _environment_route_point(343, 53, 4);
     _environment_route_point(347, 20, 4);
 
     _environment_route(false);
@@ -122,13 +123,14 @@ fun Flows._init_values() {
     _flowPoint(321, 228, 38,-170);
     _flowPoint(285,122, 16, 70);
     _flowPoint(160,49, 24,-165);
+    _flowPoint(73,35, 15, -90);
 
     // ===== ENVIRONMENT: normal 1
-    _environment(0.6);
+    _environment(STD_RANDOMNESS);
 
     _environment_route(false);
-    _environment_route_point(17, 154, 15);
-    _environment_route_point(77, 72, 12);
+    _environment_route_point(13, 154, 18);
+    _environment_route_point(66, 77, 8);
     _environment_route_point(123, 71, 12);
     _environment_route_point(115, 173, 20);
     _environment_route_point(22, 230, 34);
@@ -144,12 +146,13 @@ fun Flows._init_values() {
     _flowPoint(180, 252, 50, -110);
     _flowPoint(332, 24, 30, 85);
     _flowPoint(302, 112, 35, 85);
+    _flowPoint(80,105, 23, -135);
 
     _flowPoint(222, 188, 26, 80);
     _flowPoint(210, 148, 35, -60);
 
     // ===== ENVIRONMENT: normal 2
-    _environment(0.6);
+    _environment(STD_RANDOMNESS);
 
     _environment_route(false);
     _environment_route_point(121, 217, 10);
@@ -161,7 +164,7 @@ fun Flows._init_values() {
     _environment_route_point(344,100, 10);
 
     _flowPoint(315, 219, 60, 170);
-    _flowPoint(308, 174, 18, 140);
+    _flowPoint(308, 179, 27, 140);
     _flowPoint(21,183, 20, 40);
     _flowPoint(62, 115, 32, -103);
     _flowPoint(82, 25, 37, -25);
@@ -169,6 +172,7 @@ fun Flows._init_values() {
     _flowPoint(191, 145, 20, -100);
     _flowPoint(216,189,22,70);
     _flowPoint(165,142,20,-130);
+    _flowPoint(305, 102, 23, 40);
 
     _environment_route(false);
     _environment_route_point(340, 28, 6);
@@ -177,22 +181,23 @@ fun Flows._init_values() {
     _environment_route_point(239,103, 15);
 
     // ===== ENVIRONMENT: normal 3
-    _environment(0.6);
+    _environment(STD_RANDOMNESS);
 
     _environment_route(false);
     _environment_route_point(343,102,18);
-    _environment_route_point(295, 147, 10);
+    _environment_route_point(311, 140, 20);
+    _environment_route_point(295, 147, 4);
     _environment_route_point(255, 154, 6);
-    _environment_route_point(237, 102, 25);
-    _environment_route_point(142, 104, 40);
+    _environment_route_point(240, 108, 20);
+    _environment_route_point(142, 104, 30);
     _environment_route_point(103, 68, 10);
-    _environment_route_point(34, 96, 10);
-    _environment_route_point(11, 158, 10);
+    _environment_route_point(47, 96, 15);
+    _environment_route_point(11, 158, 20);
 
     _environment_route(false);
     _environment_route_point(340,24,10);
     _environment_route_point(337,51,6);
-    _environment_route_point(238,61,10);
+    _environment_route_point(238,75,10);
     _environment_route_point(140,87,15);
 
     _environment_route(false);
@@ -210,5 +215,12 @@ fun Flows._init_values() {
     _flowPoint(217,145,25,-60);
     _flowPoint(64,126, 30,175);
     _flowPoint(36,182,30,40);
+    _flowPoint(294,116, 30, 60);
+    _flowPoint(84, 91, 20, -140);
+    _flowPoint(94, 41, 24, -50);
+    _flowPoint(302,182, 24, 135);
+    _flowPoint(339,190, 20, 140);
+    _flowPoint(341, 160, 18, -130);
+    _flowPoint(46, 35, 15, -50);
 
 }

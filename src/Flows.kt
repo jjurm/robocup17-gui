@@ -10,6 +10,7 @@ object Flows {
     val environments = mutableListOf<Environment>()
     val superobjectRules = mutableListOf<SuperobjectRule>()
     val walls = mutableListOf<Wall>()
+    val areas = mutableListOf<Area>()
 
     init {
         _init_values()
@@ -52,6 +53,10 @@ object Flows {
 
     fun _environment_route_point(x: Int, y: Int, radius: Int) {
         environments.last().flowRoutes.last().points.add(Anchor(x, y, radius))
+    }
+
+    fun _area(x1: Int, y1: Int, x2: Int, y2: Int) {
+        areas.add(Area(x1, y1, x2, y2));
     }
 
     fun calculateNearestFlowPoint(env: Environment, point: Vector): FlowPoint? {
