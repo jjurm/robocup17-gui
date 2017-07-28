@@ -59,6 +59,13 @@ class FlowsApp : Application() {
         gc.drawImage(image, 0.0, 0.0, image.width, image.height, 0.0, 0.0, CANVAS_WIDTH, CANVAS_HEIGHT)
         drawEnv(gc, Flows.environments.get(DRAW_ENVIRONMENT))
 
+        // Areas
+        for (area in Flows.areas) {
+            gc.stroke = Color.YELLOW
+            gc.lineWidth = 3.0
+            gc.drawArea(area)
+        }
+
         // SuperobjectRules
         for (rule in Flows.superobjectRules) {
             gc.lineWidth = 2.0
