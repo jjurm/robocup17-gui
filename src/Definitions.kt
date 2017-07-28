@@ -1,4 +1,4 @@
-const val DRAW_ENVIRONMENT =1
+const val DRAW_ENVIRONMENT =3
 const val STD_RANDOMNESS = 0.1
 
 fun Flows._init_values() {
