@@ -54,16 +54,16 @@ class FlowsApp : Application() {
                 val direction = pa.directionTo(p)
                 output.text += String.format("_environment_route_point(%d, %d, %d, %d);\n",
                         pa.x.toInt(), pa.y.toInt(), radius.toInt(), direction.degreesNice());
-                Flows.environments.get(DRAW_ENVIRONMENT).flowPoints.add(FlowPoint(Vector(pa.x, pa.y), radius, direction))
+                Flows.defs.environments.get(Flows.DRAW_ENVIRONMENT).flowPoints.add(FlowPoint(Vector(pa.x, pa.y), radius, direction))
 
                 val gc = canvas.graphicsContext2D
                 gc.clearRect(0.0, 0.0, canvas.getWidth(), canvas.getHeight())
-                gc.drawFlow(Flows.environments.get(0))
+                gc.drawFlow(Flows.defs, Flows.defs.environments.get(0))
                 firstPoint = null;
             }
         }
         val gc = canvas.graphicsContext2D
-        gc.drawFlow(Flows.environments.get(0))
+        gc.drawFlow(Flows.defs, Flows.defs.environments.get(0))
         root.children.add(canvas)
 
         root.children.add(text)

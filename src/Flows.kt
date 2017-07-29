@@ -1,5 +1,8 @@
 object Flows {
 
+    const val DRAW_ENVIRONMENT = 0
+    const val STD_RANDOMNESS = 0.1
+
     const val MAP_WIDTH = 360.0
     const val MAP_HEIGHT = 270.0
     const val BORDER_DISTANCE = 12.0
@@ -7,32 +10,29 @@ object Flows {
     const val DISCRETE_FLOWPOINT_FORCE = 2.0
     const val E_A = 0
 
-    val environments = mutableListOf<Environment>()
-    val superobjectRules = mutableListOf<SuperobjectRule>()
-    val walls = mutableListOf<Wall>()
-    val areas = mutableListOf<Area>()
+    val defs = DefinitionHolder()
 
     init {
         _init_values()
-        for (env in environments) {
+        for (env in defs.environments) {
             env.flowLines = env.anchors.mapIndexed { i, flowPoint -> FlowLine(flowPoint, env.anchors[(i + 1) % env.anchors.size]) }.toMutableList()
         }
     }
 
     fun _environment(randomnessSize: Double) { // _environment must be defined before _anchor, _flowPoint
-        environments.add(Environment(randomnessSize))
+        defs.environments.add(Environment(randomnessSize))
     }
 
     fun _anchor(x: Int, y: Int, radius: Int) {
-        environments.last().anchors.add(Anchor(x, y, radius));
+        defs.environments.last().anchors.add(Anchor(x, y, radius));
     }
 
     fun _flowPoint(x: Int, y: Int, radius: Int, direction: Int) {
-        environments.last().flowPoints.add(FlowPoint(x, y, radius, direction))
+        defs.environments.last().flowPoints.add(FlowPoint(x, y, radius, direction))
     }
 
     fun _rule(aXa: Int, aYa: Int, aXb: Int, aYb: Int, eXa: Int, eYa: Int, eXb: Int, eYb: Int) {
-        superobjectRules.add(SuperobjectRule(
+        defs.superobjectRules.add(SuperobjectRule(
                 Area(aXa, aYa, aXb, aYb),
                 Area(eXa, eYa, eXb, eYb),
                 Route()
@@ -40,23 +40,23 @@ object Flows {
     }
 
     fun _rule_route_point(x: Int, y: Int) {
-        superobjectRules.last().route.points.add(Vector(x, y))
+        defs.superobjectRules.last().route.points.add(Vector(x, y))
     }
 
     fun _wall(ax: Int, ay: Int, bx: Int, by: Int) {
-        walls.add(Wall(Vector(ax, ay), Vector(bx, by)))
+        defs.walls.add(Wall(Vector(ax, ay), Vector(bx, by)))
     };
 
     fun _environment_route(withEnd: Boolean) {
-        environments.last().flowRoutes.add(FlowRoute(withEnd))
+        defs.environments.last().flowRoutes.add(FlowRoute(withEnd))
     }
 
     fun _environment_route_point(x: Int, y: Int, radius: Int) {
-        environments.last().flowRoutes.last().points.add(Anchor(x, y, radius))
+        defs.environments.last().flowRoutes.last().points.add(Anchor(x, y, radius))
     }
 
     fun _area(x1: Int, y1: Int, x2: Int, y2: Int) {
-        areas.add(Area(x1, y1, x2, y2));
+        defs.areas.add(Area(x1, y1, x2, y2));
     }
 
     fun calculateNearestFlowPoint(env: Environment, point: Vector): FlowPoint? {

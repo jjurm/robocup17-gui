@@ -15,28 +15,28 @@ private fun toCR(r: Double) = r * SCALE
 private fun toCR(r: Int) = r * SCALE
 
 
-fun GraphicsContext.drawFlow(env: Environment) {
+fun GraphicsContext.drawFlow(defs:DefinitionHolder, env: Environment) {
     val image = javafx.scene.image.Image(FileInputStream(FILENAME))
     drawImage(image, 0.0, 0.0, image.width, image.height, 0.0, 0.0, CANVAS_WIDTH, CANVAS_HEIGHT)
 
     drawPointers(env)
 
     // Walls
-    for (wall in Flows.walls) {
+    for (wall in defs.walls) {
         lineWidth = 3.0
         stroke = Color.VIOLET
         strokeLine(toCX(wall.a.x), toCY(wall.a.y), toCX(wall.b.x), toCY(wall.b.y))
     }
 
     // Areas
-    for (area in Flows.areas) {
+    for (area in defs.areas) {
         stroke = Color.YELLOW
         lineWidth = 3.0
         drawArea(area)
     }
 
     // SuperobjectRules
-    for (rule in Flows.superobjectRules) {
+    for (rule in defs.superobjectRules) {
         lineWidth = 2.0
         stroke = Color.BLUE
         drawArea(rule.area)

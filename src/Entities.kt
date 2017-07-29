@@ -1,13 +1,15 @@
+import javax.print.attribute.IntegerSyntax
+
 typealias Coord = Double
 
-open class Anchor(val point: Vector, val radius: Double) {
+open class Anchor(var point: Vector, var radius: Double) {
 
     constructor(x: Coord, y: Coord, radius: Double) : this(Vector(x, y), radius)
     constructor(x: Int, y: Int, radius: Int) : this(x.toDouble(), y.toDouble(), radius.toDouble())
 
 }
 
-class FlowPoint(point: Vector, radius: Double, val direction: Direction) : Anchor(point, radius) {
+class FlowPoint(point: Vector, radius: Double, var direction: Direction) : Anchor(point, radius) {
 
     constructor(x: Coord, y: Coord, radius: Double, direction: Double) : this(Vector(x, y), radius, Direction.fromDegrees(direction))
     constructor(x: Int, y: Int, radius: Int, direction: Int) : this(x.toDouble(), y.toDouble(), radius.toDouble(), direction.toDouble())
@@ -47,6 +49,11 @@ data class Vector(val x: Coord = 0.0, val y: Coord = 0.0) {
     }
 
     constructor(x: Int, y: Int) : this(x.toDouble(), y.toDouble())
+
+    val xI: Int
+        get() = x.toInt()
+    val yI: Int
+        get() = y.toInt()
 
     fun size() = Math.sqrt(x * x + y * y)
     fun vectorTo(point: Vector) = Vector(point.x - x, point.y - y)
@@ -94,6 +101,7 @@ class Direction(value: Double) {
         if (v > 180) v -= Math.PI
         return v.toInt()
     }
+
     fun mirrorWith(axis: Direction) = Direction(2 * axis.value - this.value)
     fun averageWith(direction: Direction) = this.weightedAverageWith(direction, 0.5)
     fun weightedAverageWith(direction: Direction, weight: Double)
