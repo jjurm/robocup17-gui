@@ -1,10 +1,6 @@
 import java.io.FileOutputStream
 import java.io.PrintWriter
 
-fun main(args: Array<String>) {
-    generateDefinitions(Flows.defs)
-}
-
 fun generateDefinitions(defs: DefinitionHolder) = defs.run {
     PrintWriter(FileOutputStream("src/Definitions.kt")).use { pw ->
         pw.println("""fun Flows._init_values() {

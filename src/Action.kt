@@ -1,5 +1,6 @@
 abstract class Action(val description: String) {
     abstract fun invoke(env: Environment, point: Vector): Action?
+    override fun toString() = description
 }
 
 fun action(description: String, lambda: (env: Environment, point: Vector) -> Action?): Action = object : Action(description) {
