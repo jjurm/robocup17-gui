@@ -8,7 +8,10 @@ import javafx.scene.control.TextArea
 import javafx.scene.input.MouseEvent
 import javafx.scene.paint.Color
 import javafx.stage.Stage
+import java.awt.Toolkit
+import java.awt.datatransfer.StringSelection
 import java.io.FileInputStream
+
 
 class FlowsApp : Application() {
     companion object {
@@ -36,6 +39,9 @@ class FlowsApp : Application() {
             var p = Vector(e.sceneX.toInt() / SCALE, e.sceneY.toInt() / SCALE);
             p = Vector(p.x, Flows.MAP_HEIGHT - p.y)
             text.text = String.format("%d, %d", p.x.toInt(), p.y.toInt())
+        }
+        canvas.onMouseClicked = EventHandler<MouseEvent> { e ->
+            storeToClipboard(String.format("%d, %d, ", e.sceneX.toInt(), e.sceneY.toInt()))
         }
         val gc = canvas.graphicsContext2D
         drawShapes(gc)
@@ -166,14 +172,14 @@ class FlowsApp : Application() {
         for (flowRoute in env.flowRoutes) {
 
             i = 0;
-            while (i < flowRoute.points.size-1) {
+            while (i < flowRoute.points.size - 1) {
                 val a = flowRoute.points[i]
-                val b = flowRoute.points[i+1]
+                val b = flowRoute.points[i + 1]
 
                 gc.stroke = Color.AQUA;
                 gc.lineWidth = 2.0;
                 gc.drawAnchor(a)
-                if (i+2 == flowRoute.points.size) {
+                if (i + 2 == flowRoute.points.size) {
                     gc.drawAnchor(b)
                 }
 
@@ -195,7 +201,7 @@ class FlowsApp : Application() {
         stroke = Color.ORANGE
         while (i < r.points.size - 1) {
             val pa = r.points.get(i)
-            val pb = r.points.get(i+1)
+            val pb = r.points.get(i + 1)
             strokeLine(toCX(pa.x), toCY(pa.y), toCX(pb.x), toCY(pb.y))
             i++
         }
@@ -209,7 +215,7 @@ class FlowsApp : Application() {
         var i = 0;
         while (i < list.size - 1) {
             val pa = list.get(i)
-            val pb = list.get(i+1)
+            val pb = list.get(i + 1)
             strokeLine(toCX(pa.x), toCY(pa.y), toCX(pb.x), toCY(pb.y))
             i++
         }
@@ -217,6 +223,12 @@ class FlowsApp : Application() {
 
     private fun GraphicsContext.drawAnchor(o: Anchor) {
         strokeOval(toCX(o.point.x) - toCR(o.radius) / 2, toCY(o.point.y) - toCR(o.radius) / 2, toCR(o.radius), toCR(o.radius))
+    }
+
+    private fun storeToClipboard(string: String) {
+        val stringSelection = StringSelection(string)
+        val clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard()
+        clpbrd.setContents(stringSelection, null)
     }
 
 }
