@@ -1,4 +1,4 @@
-const val DRAW_ENVIRONMENT = 1
+const val DRAW_ENVIRONMENT = 2
 const val STD_RANDOMNESS = 0.1
 
 fun Flows._init_values() {
@@ -146,5 +146,59 @@ fun Flows._init_values() {
     // ===== ENVIRONMENT: normal 2
     _environment(STD_RANDOMNESS);
 
+    //flow from down left deposit to upper part
+    _environment_route(false);
+    _environment_route_point(12, 22, 10);
+    _environment_route_point(18, 72, 8);
+    _environment_route_point(53, 85, 7);
+    _environment_route_point(67, 108, 12);
+    _environment_route_point(30, 191,  18);
+
+
+    //flow from down bonus to up
+    _environment_route(true);
+    _environment_route_point(203,51,20);
+    _environment_route_point(119,52,20);
+    _environment_route_point(120,112,10);
+    _environment_route_point(30,191,25);
+    _environment_route_point(16,252,20);
+
+    // /flow from very right via uppper part to up left
+    _environment_route(true);
+    _environment_route_point(343, 172, 6);
+    _environment_route_point(339, 207, 13);
+    _environment_route_point(307, 260, 10);
+    _environment_route_point(260, 260, 6);
+    _environment_route_point(181, 252, 25);
+    _environment_route_point(140, 216, 15);
+    _environment_route_point(100, 216, 6);
+    _environment_route_point(75, 220, 25);
+    _environment_route_point(14, 252, 20);
+
+    //flow from down right deposit to up left
+    _environment_route(false);
+    _environment_route_point(340, 22,10);
+    _environment_route_point(337, 53,10);
+    _environment_route_point(244, 98,30);
+    _environment_route_point(121, 130,40);
+
+    _flowPoint(294, 184,30, -45);
+    _flowPoint(182, 178,20,-90);
+    _flowPoint(84, 50, 18,-10);
+    _flowPoint(62, 30,20,-10);
+    _flowPoint(99, 60, 20,-10);
+    _flowPoint(230, 12,20,180);
+    _flowPoint(260, 20,20,90);
+    _flowPoint(248, 51,40,75);
+    _flowPoint(248, 51,40,75);
+    _flowPoint(237, 74,20,90);
+    _flowPoint(127, 190,20,180);
+    _flowPoint(152, 179,20,-80);
+    _flowPoint(166, 179,20,-80);
+    _flowPoint(132, 176,10,-80);
+    _flowPoint(129, 252,30,-80);
+    _flowPoint(128, 238,20,-80);
+    _flowPoint(331, 70,18,-170);
+    _flowPoint(297, 242,18,90);
 
 }
