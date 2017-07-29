@@ -81,9 +81,9 @@ fun Flows._init_values() {
     _wall(110,270,110,230);
 
     //Quick areas
-    _area(104, 205, 157, 54);
-    _area(104, 80, 302, 0);
-    _area(236, 226, 270, 66);
+    _area(0,175,140,110);
+    _area(240,157,324,45);
+    _area(320,175,357,99);
 
     // ===== ENVIRONMENT: deposit
     _environment(0.0);
