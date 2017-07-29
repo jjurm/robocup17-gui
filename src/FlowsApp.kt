@@ -41,7 +41,9 @@ class FlowsApp : Application() {
             text.text = String.format("%d, %d", p.x.toInt(), p.y.toInt())
         }
         canvas.onMouseClicked = EventHandler<MouseEvent> { e ->
-            storeToClipboard(String.format("%d, %d, ", e.sceneX.toInt(), e.sceneY.toInt()))
+            var p = Vector(e.sceneX.toInt() / SCALE, e.sceneY.toInt() / SCALE);
+            p = Vector(p.x, Flows.MAP_HEIGHT - p.y)
+            storeToClipboard(String.format("%d, %d", p.x.toInt(), p.y.toInt()))
         }
         val gc = canvas.graphicsContext2D
         drawShapes(gc)
