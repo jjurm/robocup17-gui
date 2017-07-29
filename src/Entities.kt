@@ -98,8 +98,8 @@ class Direction(value: Double) {
     fun degrees() = this.value * 180 / Math.PI
     fun degreesNice(): Int {
         var v = degrees()
-        if (v > 180) v -= Math.PI
-        return v.toInt()
+        if (v > 180) v -= 360
+        return Math.round(v).toInt()
     }
 
     fun mirrorWith(axis: Direction) = Direction(2 * axis.value - this.value)
@@ -147,7 +147,18 @@ class FlowRoute(val withEnd: Boolean) {
 data class Wall(
         var a: Vector,
         var b: Vector
-)
+) {
+    fun distanceToPoint(point: Vector): Double {
+        val aToP = a.vectorTo(point)
+        val aToB = a.vectorTo(b)
+        val atb2 = Math.pow(aToB.x, 2.0) + Math.pow(aToB.y, 2.0)
+        val atp_dot_atb = aToP.x * aToB.x + aToP.y * aToB.y
+
+        val tx = Utils.toRange(atp_dot_atb / atb2, 0.0, 1.0)
+
+        return a.plus(aToB.multiply(tx)).distanceTo(point)
+    }
+}
 
 data class SuperobjectRule(
         var area: Area,

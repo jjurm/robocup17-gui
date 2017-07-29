@@ -1,14 +1,13 @@
 import javafx.application.Application
 import javafx.event.EventHandler
+import javafx.geometry.Insets
 import javafx.scene.Scene
 import javafx.scene.canvas.Canvas
-import javafx.scene.control.Button
-import javafx.scene.control.Label
-import javafx.scene.control.RadioButton
-import javafx.scene.control.ToggleGroup
+import javafx.scene.control.*
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
+import javafx.scene.paint.Color
 import javafx.stage.Stage
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
@@ -23,18 +22,20 @@ class FlowsApp : Application() {
         const val SCALE = 2.0;
         const val CANVAS_WIDTH = Flows.MAP_WIDTH * SCALE;
         const val CANVAS_HEIGHT = Flows.MAP_HEIGHT * SCALE;
-        const val CANVAS_STEP = 8.0
+        const val CANVAS_STEP = 10.0
     }
 
     var firstPoint: Vector? = null;
 
-    internal var lblDescription = Label()
-    internal var lblInfo = Label()
+    internal var lblDescription = Label("Next action: (none)")
+    internal var lblInfo = Label("0, 0")
     internal var buttons = VBox()
     internal var toggleGroup = ToggleGroup()
+    internal var canvas: Canvas = Canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
 
     val togglesMap = mutableMapOf<RadioButton, Action>()
     var nextAction: Action? = null
+    var selectedEnv = Flows.defs.environments.first()
 
     private fun addButton(actionButton: ActionButton) {
         val btn = RadioButton(actionButton.text)
@@ -47,27 +48,41 @@ class FlowsApp : Application() {
         primaryStage.title = "Flows"
         val root = HBox()
 
-        buttons.children.add(lblDescription)
+        val menu = MenuButton("Environment 0")
+        menu.items.addAll((0..Flows.defs.environments.size - 1).map { index ->
+            MenuItem("Environment " + index).apply {
+                onAction = EventHandler {
+                    selectedEnv = Flows.defs.environments[index]
+                    menu.text = "Environment " + index
+                    redraw()
+                }
+            }
+        })
+        buttons.children.add(menu)
         buttons.children.add(lblInfo)
+        buttons.children.add(lblDescription)
 
-        val canvas = Canvas(CANVAS_WIDTH, CANVAS_HEIGHT)
         canvas.onMouseMoved = EventHandler<MouseEvent> { e ->
             var p = Vector(e.sceneX.toInt() / SCALE, e.sceneY.toInt() / SCALE);
             p = Vector(p.x, Flows.MAP_HEIGHT - p.y)
             lblInfo.text = String.format("%d, %d", p.x.toInt(), p.y.toInt())
         }
-        val gc = canvas.graphicsContext2D
         canvas.onMouseClicked = EventHandler<MouseEvent> { e ->
             var p = Vector(e.sceneX.toInt() / SCALE, e.sceneY.toInt() / SCALE);
             p = Vector(p.x, Flows.MAP_HEIGHT - p.y)
-            nextAction = (nextAction ?: togglesMap[toggleGroup.selectedToggle])?.invoke(Flows.defs.environments.first(), p)
+            nextAction = (nextAction ?: togglesMap[toggleGroup.selectedToggle])?.invoke(selectedEnv, p)
             lblDescription.text = "Next action: " + (nextAction?.toString() ?: "(none)")
-            gc.drawFlow(Flows.defs, Flows.defs.environments.first())
+            if (nextAction != null) {
+                drawSmallMarker(p)
+            } else {
+                redraw()
+            }
         }
-        gc.drawFlow(Flows.defs, Flows.defs.environments.get(0))
+        redraw()
         root.children.add(canvas)
 
         buttons.spacing = 5.0
+        buttons.padding = Insets(10.0)
 
         createActionButtons(Flows.defs).forEach { ab -> addButton(ab) }
 
@@ -81,6 +96,19 @@ class FlowsApp : Application() {
 
         primaryStage.scene = Scene(root)
         primaryStage.show()
+    }
+
+    private fun redraw() {
+        canvas.graphicsContext2D.drawFlow(Flows.defs, selectedEnv)
+    }
+
+    fun drawSmallMarker(pos: Vector) = with(canvas.graphicsContext2D) {
+        stroke = Color.LIME
+        val size = 3
+        strokeOval(toCX(pos.x) - toCR(size)/2, toCY(pos.y) - toCR(size)/2, toCR(size), toCR(size))
+        lineWidth = 0.5
+        strokeLine(toCX(pos.x), 0.0, toCX(pos.x), CANVAS_HEIGHT)
+        strokeLine(0.0, toCY(pos.y), CANVAS_WIDTH, toCY(pos.y))
     }
 
     private fun storeToClipboard(string: String) {

@@ -7,19 +7,16 @@ import javafx.scene.canvas.GraphicsContext
 import javafx.scene.paint.Color
 import java.io.FileInputStream
 
-private fun toCX(posX: Double): Double = posX * SCALE
-private fun toCX(posX: Int): Double = posX * SCALE
-private fun toCY(posY: Double): Double = CANVAS_HEIGHT - posY * SCALE
-private fun toCY(posY: Int): Double = CANVAS_HEIGHT - posY * SCALE
-private fun toCR(r: Double) = r * SCALE
-private fun toCR(r: Int) = r * SCALE
+fun toCX(posX: Double): Double = posX * SCALE
+fun toCX(posX: Int): Double = posX * SCALE
+fun toCY(posY: Double): Double = CANVAS_HEIGHT - posY * SCALE
+fun toCY(posY: Int): Double = CANVAS_HEIGHT - posY * SCALE
+fun toCR(r: Double) = r * SCALE
+fun toCR(r: Int) = r * SCALE
 
-
-fun GraphicsContext.drawFlow(defs:DefinitionHolder, env: Environment) {
+fun GraphicsContext.drawFlow(defs: DefinitionHolder, env: Environment) {
     val image = javafx.scene.image.Image(FileInputStream(FILENAME))
     drawImage(image, 0.0, 0.0, image.width, image.height, 0.0, 0.0, CANVAS_WIDTH, CANVAS_HEIGHT)
-
-    drawPointers(env)
 
     // Walls
     for (wall in defs.walls) {
@@ -45,7 +42,8 @@ fun GraphicsContext.drawFlow(defs:DefinitionHolder, env: Environment) {
         drawRuleRoute(rule)
     }
 
-    drawEnv(env);
+    drawEnv(env)
+    drawPointers(env)
 }
 
 fun GraphicsContext.drawEnv(env: Environment) {

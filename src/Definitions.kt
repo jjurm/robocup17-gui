@@ -1,17 +1,10 @@
-const val DRAW_ENVIRONMENT = 0
-const val STD_RANDOMNESS = 0.1
-
 fun Flows._init_values() {
+    // =====DEFINITIONS=====
 
-    // ===== GLOBAL =========
-
-    //Wall: left stone
     _wall(0, 94, 40, 94);
     _wall(40, 94, 39, 104);
     _wall(39, 104, 0, 104);
     _wall(0, 104, 0, 94);
-
-    //Wall: left down stone strap trap
     _wall(40, 0, 50, 0);
     _wall(50, 0, 50, 40);
     _wall(50, 40, 70, 40);
@@ -22,25 +15,17 @@ fun Flows._init_values() {
     _wall(70, 90, 70, 70);
     _wall(70, 70, 40, 70);
     _wall(40, 70, 40, 0);
-
-    //Wall: down doublestone stone
     _wall(140, 60, 220, 60);
     _wall(220, 60, 220, 30);
     _wall(220, 30, 230, 30);
     _wall(230, 30, 230, 70);
     _wall(230, 70, 140, 70);
     _wall(140, 70, 140, 60);
-
-    //Wall: down stone
     _wall(310, 0, 320, 0);
     _wall(320, 0, 320, 40);
     _wall(320, 40, 310, 40);
     _wall(310, 40, 310, 0);
-
-    //Wall: down swamp cross
     _wall(231, 30, 250, 0);
-
-    //Wall: tower stone trap trap stones around up right deposite)
     _wall(170, 200, 175, 187);
     _wall(175, 187, 195, 187);
     _wall(195, 187, 195, 195);
@@ -61,31 +46,21 @@ fun Flows._init_values() {
     _wall(195, 207, 190, 209);
     _wall(190, 209, 177, 213);
     _wall(177, 213, 170, 200);
-
-    //Wall: up swamp cross
     _wall(127, 181, 170, 200);
-
-    //Wall: right trap
-
     _wall(330, 70, 360, 70);
     _wall(360, 70, 360, 100);
     _wall(360, 100, 330, 100);
     _wall(330, 100, 330, 70);
-
-    //Wall: up stone
     _wall(110, 230, 120, 230);
     _wall(120, 230, 121, 270);
     _wall(121, 270, 110, 270);
     _wall(110, 270, 110, 230);
 
-    //Quick areas
-    _area(0, 175, 140, 110);
-    _area(240, 143, 324, 45);
-    _area(320, 175, 357, 99);
+    _area(0, 110, 140, 175);
+    _area(240, 45, 324, 143);
+    _area(320, 99, 357, 175);
+    _area(112, 73, 137, 114);
 
-    _area(112, 114, 137, 73);
-
-    // ===== ENVIRONMENT: deposit
     _environment(0.0);
 
     _environment_route(true);
@@ -141,7 +116,6 @@ fun Flows._init_values() {
     _flowPoint(217, 59, 30, -135);
     _flowPoint(177, 31, 50, 180);
     _flowPoint(226, 12, 30, 180);
-
     _flowPoint(311, 35, 20, 120);
     _flowPoint(316, 90, 18, 80);
     _flowPoint(327, 108, 25, 112);
@@ -157,15 +131,15 @@ fun Flows._init_values() {
     _flowPoint(255, 187, 20, -105);
     _flowPoint(315, 72, 25, -75);
     _flowPoint(270, 216, 30, 135);
-    _flowPoint(267, 247, 25,65);
-    _flowPoint(270, 247, 25,50);
+    _flowPoint(267, 247, 25, 65);
+    _flowPoint(270, 247, 25, 50);
     _flowPoint(305, 244, 35, 45);
     _flowPoint(234, 235, 40, 95);
     _flowPoint(113, 175, 20, -135);
     _flowPoint(99, 215, 30, -135);
     _flowPoint(99, 91, 13, 45);
 
-    // ===== ENVIRONMENT: normal 1
+
     _environment(STD_RANDOMNESS);
 
     _environment_route(true);
@@ -233,10 +207,9 @@ fun Flows._init_values() {
     _flowPoint(285, 245, 16, 50);
     _flowPoint(248, 52, 35, 40);
 
-    // ===== ENVIRONMENT: normal 2
+
     _environment(STD_RANDOMNESS);
 
-    //flow from down left deposit to upper part
     _environment_route(false);
     _environment_route_point(12, 22, 10);
     _environment_route_point(18, 72, 8);
@@ -244,8 +217,6 @@ fun Flows._init_values() {
     _environment_route_point(58, 114, 12);
     _environment_route_point(30, 191, 18);
 
-
-    //flow from down bonus to up
     _environment_route(true);
     _environment_route_point(212, 14, 20);
     _environment_route_point(194, 35, 15);
@@ -254,7 +225,6 @@ fun Flows._init_values() {
     _environment_route_point(30, 191, 25);
     _environment_route_point(9, 259, 20);
 
-    // /flow from very right via uppper part to up left
     _environment_route(true);
     _environment_route_point(343, 172, 6);
     _environment_route_point(339, 207, 13);
@@ -266,7 +236,6 @@ fun Flows._init_values() {
     _environment_route_point(75, 220, 25);
     _environment_route_point(9, 259, 20);
 
-    //flow from down right deposit to up left
     _environment_route(false);
     _environment_route_point(340, 22, 10);
     _environment_route_point(337, 53, 10);
@@ -305,5 +274,6 @@ fun Flows._init_values() {
     _flowPoint(338, 126, 30, 75);
     _flowPoint(196, 59, 24, -145);
     _flowPoint(96, 87, 18, 35);
+
 
 }

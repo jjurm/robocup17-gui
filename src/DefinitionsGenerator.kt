@@ -13,7 +13,11 @@ fun generateDefinitions(defs: DefinitionHolder) = defs.run {
         pw.println()
 
         environments.forEach { env ->
-            pw.println("    _environment(${env.randomnessSize});")
+            if (env.randomnessSize == Flows.STD_RANDOMNESS) {
+                pw.println("    _environment(STD_RANDOMNESS);")
+            } else {
+                pw.println("    _environment(${env.randomnessSize});")
+            }
             pw.println()
 
             env.flowRoutes.forEach { route ->

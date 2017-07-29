@@ -30,16 +30,29 @@ fun createActionButtons(defs: DefinitionHolder): List<ActionButton> {
         if (area != null) defs.areas.remove(area)
     }))
 
+    list.add(ActionButton("Wall -> add", action("select first point") { _, pa ->
+        actionFinal("select second point") { _, pb ->
+            Flows.defs.walls.add(Wall(pa, pb))
+        }
+    }))
+    list.add(ActionButton("Wall -> remove", actionFinal("select wall") { _, p ->
+        defs.walls.minBy {
+            it.distanceToPoint(p)
+        }.let {
+            defs.walls.remove(it)
+        }
+    }))
+
     list.add(ActionButton("FlowPoint -> new", action("select point") { _, pCoords ->
         actionFinal("select direction and radius") { env, target ->
-            env.flowPoints.add(FlowPoint(pCoords, pCoords.distanceTo(target), pCoords.directionTo(target)))
+            env.flowPoints.add(FlowPoint(pCoords, pCoords.distanceTo(target) * 2, pCoords.directionTo(target)))
         }
     }))
     list.add(ActionButton("FlowPoint -> move", afterSelectFlowPoint("select position") { flowPoint, dst ->
         flowPoint.point = dst
     }))
     list.add(ActionButton("FlowPoint -> edit radius", afterSelectFlowPoint("select radius") { flowPoint, radiusPoint ->
-        flowPoint.radius = flowPoint.point.distanceTo(radiusPoint)
+        flowPoint.radius = flowPoint.point.distanceTo(radiusPoint) * 2
     }))
     list.add(ActionButton("FlowPoint -> edit direction", afterSelectFlowPoint("select direction") { flowPoint, directionPoint ->
         flowPoint.direction = flowPoint.point.directionTo(directionPoint)
@@ -56,7 +69,7 @@ fun createActionButtons(defs: DefinitionHolder): List<ActionButton> {
         if (selectedRoute == null) null
         else action("select point") { _, dst ->
             actionFinal("select radius") { _, radiusPoint ->
-                selectedRoute.points.add(Anchor(dst, dst.distanceTo(radiusPoint)))
+                selectedRoute.points.add(Anchor(dst, dst.distanceTo(radiusPoint) * 2))
             }
         }
     }))
@@ -68,7 +81,7 @@ fun createActionButtons(defs: DefinitionHolder): List<ActionButton> {
         else action("select position") { _, pos ->
             actionFinal("select radius") { _, radiusPoint ->
                 val index = selectedPair.list.indexOf(selectedPair.obj);
-                selectedPair.list.add(index, Anchor(pos, pos.distanceTo(radiusPoint)))
+                selectedPair.list.add(index, Anchor(pos, pos.distanceTo(radiusPoint) * 2))
             }
         }
     }))
@@ -76,7 +89,7 @@ fun createActionButtons(defs: DefinitionHolder): List<ActionButton> {
         anchor.point = pos
     }))
     list.add(ActionButton("FlowRoute.Anchor -> edit radius", afterSelectFlowRouteAnchor("select radius") { anchor, _, pos ->
-        anchor.radius = anchor.point.distanceTo(pos)
+        anchor.radius = anchor.point.distanceTo(pos) * 2
     }))
     list.add(ActionButton("FlowRoute.Anchor -> delete", actionFinal("select FlowRoute.Anchor") { env, lookupPoint ->
         val selectedPair = env.flowRoutes.map { route ->
