@@ -89,6 +89,11 @@ class Direction(value: Double) {
     fun minus(direction: Direction) = Direction(this.value - direction.value)
     fun invert() = Direction(this.value + Math.PI)
     fun degrees() = this.value * 180 / Math.PI
+    fun degreesNice(): Int {
+        var v = degrees()
+        if (v > 180) v -= Math.PI
+        return v.toInt()
+    }
     fun mirrorWith(axis: Direction) = Direction(2 * axis.value - this.value)
     fun averageWith(direction: Direction) = this.weightedAverageWith(direction, 0.5)
     fun weightedAverageWith(direction: Direction, weight: Double)
