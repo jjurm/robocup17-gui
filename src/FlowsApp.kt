@@ -18,7 +18,7 @@ class FlowsApp : Application() {
             Application.launch(FlowsApp::class.java, *args)
         }
 
-        const val FILENAME = "map_day3.png";
+        const val FILENAME = "map_day4.png";
         const val SCALE = 2.0;
         const val CANVAS_WIDTH = Flows.MAP_WIDTH * SCALE;
         const val CANVAS_HEIGHT = Flows.MAP_HEIGHT * SCALE;
