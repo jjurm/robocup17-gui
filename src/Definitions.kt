@@ -96,14 +96,13 @@ fun Flows._init_values() {
     _environment_route_point(12, 21,5);
 
     _environment_route(false);
-    _environment_route_point(179, 29,20);
+    _environment_route_point(213, 33,20);
     _environment_route_point(117, 35,20);
     _environment_route_point(119, 108,10);
     _environment_route_point(66, 108,10);
     _environment_route_point(51, 87,10);
 
     _environment_route(true);
-    _environment_route_point(134, 214,20);
     _environment_route_point(163, 249,15);
     _environment_route_point(281, 257,10);
     _environment_route_point(340, 248,10);
@@ -113,7 +112,7 @@ fun Flows._init_values() {
 
     _environment_route(true);
     _environment_route_point(149, 155,30);
-    _environment_route_point(241, 120,30);
+    _environment_route_point(241, 140,20);
     _environment_route_point(313, 137,10);
     _environment_route_point(308, 168,5);
     _environment_route_point(290, 187,5);
@@ -129,6 +128,17 @@ fun Flows._init_values() {
     _flowPoint(75, 40,30,0);
     _flowPoint(65, 20,30,0);
     _flowPoint(97, 60,20,-10);
+    _flowPoint(68, 91,12,175);
+    _flowPoint(78, 60,20,-20);
+    _flowPoint(92, 258,30,-135);
+    _flowPoint(121, 190,35,160);
+    _flowPoint(125, 198,20,135);
+    _flowPoint(144, 61,30,-135);
+    _flowPoint(179, 59,30,-135);
+    _flowPoint(217, 59,30,-135);
+    _flowPoint(177, 31,50,180);
+
+
 
 
     // ===== ENVIRONMENT: normal 1
