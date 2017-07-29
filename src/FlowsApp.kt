@@ -65,7 +65,17 @@ class FlowsApp : Application() {
     private fun drawShapes(gc: GraphicsContext) {
         val image = javafx.scene.image.Image(FileInputStream(FILENAME))
         gc.drawImage(image, 0.0, 0.0, image.width, image.height, 0.0, 0.0, CANVAS_WIDTH, CANVAS_HEIGHT)
-        drawEnv(gc, Flows.environments.get(DRAW_ENVIRONMENT))
+
+        val env = Flows.environments.get(DRAW_ENVIRONMENT)
+
+        drawFlow(gc, env)
+
+        // Walls
+        for (wall in Flows.walls) {
+            gc.lineWidth = 3.0
+            gc.stroke = Color.VIOLET
+            gc.strokeLine(toCX(wall.a.x), toCY(wall.a.y), toCX(wall.b.x), toCY(wall.b.y))
+        }
 
         // Areas
         for (area in Flows.areas) {
@@ -84,46 +94,13 @@ class FlowsApp : Application() {
             gc.drawRuleRoute(rule)
         }
 
-        // Walls
-        for (wall in Flows.walls) {
-            gc.lineWidth = 3.0
-            gc.stroke = Color.VIOLET
-            gc.strokeLine(toCX(wall.a.x), toCY(wall.a.y), toCX(wall.b.x), toCY(wall.b.y))
-        }
+        drawEnv(gc, env);
     }
 
     private fun drawEnv(gc: GraphicsContext, env: Environment) {
         gc.lineWidth = 2.0
         gc.stroke = Color.BLACK
         gc.strokeRect(0.0, 0.0, CANVAS_WIDTH, CANVAS_HEIGHT)
-
-        // Draw markers
-        var x = CANVAS_STEP / 2
-        while (x < CANVAS_WIDTH) {
-            var y = CANVAS_STEP / 2
-            while (y < CANVAS_HEIGHT) {
-                val position = Vector(x, y)
-
-                val finalVector = Flows.calculateMoveVector(env, position)
-
-                val MARK_SIZE = 2.0
-                val drawVector = Vector.radial(finalVector.direction(), toCR(MARK_SIZE)).invert();
-
-                gc.lineWidth = 1.0
-                gc.stroke = Color.BLACK
-                val RADIUS = 1.0
-                gc.strokeOval(toCX(position.x) - toCR(RADIUS) / 2, toCY(position.y) - toCR(RADIUS) / 2, toCR(RADIUS), toCR(RADIUS));
-
-                gc.stroke = Color.rgb(50, 50, 50)
-                gc.beginPath();
-                gc.moveTo(toCX(position.x), toCY(position.y));
-                gc.lineTo(toCX(position.x + drawVector.x), toCY(position.y + drawVector.y));
-                gc.stroke();
-
-                y += CANVAS_STEP
-            }
-            x += CANVAS_STEP
-        }
 
         // FlowLines
         var i = 0;
@@ -191,6 +168,36 @@ class FlowsApp : Application() {
                 i++
             }
 
+        }
+    }
+
+    private fun drawFlow(gc: GraphicsContext, env: Environment) {
+        // Draw markers
+        var x = CANVAS_STEP / 2
+        while (x < CANVAS_WIDTH) {
+            var y = CANVAS_STEP / 2
+            while (y < CANVAS_HEIGHT) {
+                val position = Vector(x, y)
+
+                val finalVector = Flows.calculateMoveVector(env, position)
+
+                val MARK_SIZE = 2.0
+                val drawVector = Vector.radial(finalVector.direction(), toCR(MARK_SIZE)).invert();
+
+                gc.lineWidth = 1.0
+                gc.stroke = Color.BLACK
+                val RADIUS = 1.0
+                gc.strokeOval(toCX(position.x) - toCR(RADIUS) / 2, toCY(position.y) - toCR(RADIUS) / 2, toCR(RADIUS), toCR(RADIUS));
+
+                gc.stroke = Color.rgb(50, 50, 50)
+                gc.beginPath();
+                gc.moveTo(toCX(position.x), toCY(position.y));
+                gc.lineTo(toCX(position.x + drawVector.x), toCY(position.y + drawVector.y));
+                gc.stroke();
+
+                y += CANVAS_STEP
+            }
+            x += CANVAS_STEP
         }
     }
 
