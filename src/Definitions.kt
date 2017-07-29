@@ -1,4 +1,4 @@
-const val DRAW_ENVIRONMENT = 2
+const val DRAW_ENVIRONMENT = 0
 const val STD_RANDOMNESS = 0.1
 
 fun Flows._init_values() {
@@ -87,6 +87,48 @@ fun Flows._init_values() {
 
     // ===== ENVIRONMENT: deposit
     _environment(0.0);
+
+    _environment_route(true);
+    _environment_route_point(61, 220,50);
+    _environment_route_point(66, 108,10);
+    _environment_route_point(52, 86,10);
+    _environment_route_point(18, 71,5);
+    _environment_route_point(12, 21,5);
+
+    _environment_route(false);
+    _environment_route_point(179, 29,20);
+    _environment_route_point(117, 35,20);
+    _environment_route_point(119, 108,10);
+    _environment_route_point(66, 108,10);
+    _environment_route_point(51, 87,10);
+
+    _environment_route(true);
+    _environment_route_point(134, 214,20);
+    _environment_route_point(163, 249,15);
+    _environment_route_point(281, 257,10);
+    _environment_route_point(340, 248,10);
+    _environment_route_point(338, 153,10);
+    _environment_route_point(308, 169,5);
+    _environment_route_point(290, 187,5);
+
+    _environment_route(true);
+    _environment_route_point(149, 155,30);
+    _environment_route_point(241, 120,30);
+    _environment_route_point(313, 137,10);
+    _environment_route_point(308, 168,5);
+    _environment_route_point(290, 187,5);
+
+    _environment_route(true);
+    _environment_route_point(253, 61,20);
+    _environment_route_point(339, 55,10);
+    _environment_route_point(342, 19,5);
+
+    _flowPoint(110, 234,20,-135);
+    _flowPoint(111, 147,40,-135);
+    _flowPoint(25, 120,40,0);
+    _flowPoint(75, 40,30,0);
+    _flowPoint(65, 20,30,0);
+    _flowPoint(97, 60,20,-10);
 
 
     // ===== ENVIRONMENT: normal 1
