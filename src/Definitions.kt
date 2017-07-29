@@ -137,6 +137,7 @@ fun Flows._init_values() {
     _flowPoint(179, 59,30,-135);
     _flowPoint(217, 59,30,-135);
     _flowPoint(177, 31,50,180);
+    _flowPoint(226, 12,30,180);
 
 
 
