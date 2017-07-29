@@ -25,21 +25,24 @@ fun Flows._init_values() {
     _wall(70,70,40,70);
     _wall(40,70,40,0);
 
-    //Wall: down doublestone stone swamp stone
+    //Wall: down doublestone stone
     _wall(140,60,220,60);
-    _wall(220,60,220,0);
-    _wall(220,0,320,0);
-    _wall(320,0,320,40);
-    _wall(320,40,310,40);
-    _wall(310,40,310,30);
-    _wall(310,30,230,30);
+    _wall(220,60,220,30);
+    _wall(220,30,230,30);
     _wall(230,30,230,70);
     _wall(230,70,140,70);
     _wall(140,70,140,60);
 
-    //Wall: trap tower stone trap trap stones around up right deposite)
-    _wall(110,170,170,170 );
-    _wall(170,170,170,200);
+    //Wall: down stone
+    _wall(310,0,320,0);
+    _wall(320,0,320,40);
+    _wall(320,40,310,40);
+    _wall(310,40,310,0);
+
+    //Wall: down swamp cross
+    _wall(231,30,250,0);
+
+    //Wall: tower stone trap trap stones around up right deposite)
     _wall(170,200,175,187);
     _wall(175,187,195,187);
     _wall(195,187,195,195);
@@ -60,8 +63,9 @@ fun Flows._init_values() {
     _wall(195,207,190,209);
     _wall(190,209,177,213);
     _wall(177,213,170,200);
-    _wall(170,200,110,200);
-    _wall(110,200,110,170);
+
+    //Wall: up swamp cross
+    _wall(120,175,170,200);
 
     //Wall: right trap
 
