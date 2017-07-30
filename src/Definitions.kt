@@ -65,12 +65,14 @@ fun Flows._init_values() {
     _wall(174, 185, 168, 183);
     _wall(168, 183, 164, 174);
 
+    _area_group();
     _area(1, 1, 211, 34);
     _area(61, 34, 91, 77);
     _area(1, 113, 159, 194);
     _area(308, 2, 357, 159);
     _area(153, 229, 257, 268);
     _area(202, 159, 278, 192);
+
 
     _environment(0.0);
 
@@ -82,6 +84,7 @@ fun Flows._init_values() {
     _environment(STD_RANDOMNESS);
 
     _environment_route(false);
+    _environment_route_point(19, 198, 29);
     _environment_route_point(57, 164, 82);
     _environment_route_point(99, 247, 36);
     _environment_route_point(175, 249, 20);
@@ -117,7 +120,7 @@ fun Flows._init_values() {
 
     _flowPoint(132, 208, 52, 90);
     _flowPoint(177, 206, 42, 91);
-    _flowPoint(204, 219, 26, 143);
+    _flowPoint(198, 224, 26, 143);
     _flowPoint(332, 224, 84, -173);
     _flowPoint(301, 199, 53, -179);
     _flowPoint(284, 183, 23, 137);
@@ -126,13 +129,13 @@ fun Flows._init_values() {
     _flowPoint(285, 164, 11, -75);
     _flowPoint(273, 151, 16, 0);
     _flowPoint(19, 258, 53, -92);
-    _flowPoint(38, 235, 18, -93);
-    _flowPoint(37, 255, 18, -139);
-    _flowPoint(38, 242, 21, -137);
+    _flowPoint(35, 229, 18, -93);
+    _flowPoint(34, 261, 18, -139);
+    _flowPoint(35, 242, 21, -137);
     _flowPoint(12, 105, 58, 89);
     _flowPoint(45, 104, 38, 78);
     _flowPoint(67, 103, 39, 86);
-    _flowPoint(92, 122, 28, 96);
+    _flowPoint(92, 122, 28, 131);
     _flowPoint(109, 121, 30, 96);
     _flowPoint(126, 120, 20, 93);
     _flowPoint(139, 120, 14, 90);
@@ -140,16 +143,16 @@ fun Flows._init_values() {
     _flowPoint(155, 122, 12, 99);
     _flowPoint(185, 143, 35, 180);
     _flowPoint(212, 97, 41, -16);
-    _flowPoint(210, 39, 16, -86);
-    _flowPoint(162, 37, 16, -147);
-    _flowPoint(160, 46, 17, 97);
+    _flowPoint(210, 39, 16, -45);
+    _flowPoint(162, 37, 16, -130);
+    _flowPoint(160, 46, 17, 114);
     _flowPoint(178, 47, 21, 93);
     _flowPoint(195, 50, 20, 125);
     _flowPoint(199, 65, 16, 135);
     _flowPoint(199, 76, 20, 110);
     _flowPoint(208, 76, 21, 31);
-    _flowPoint(211, 68, 29, -70);
-    _flowPoint(196, 34, 16, -133);
+    _flowPoint(211, 68, 29, -56);
+    _flowPoint(196, 34, 16, -125);
     _flowPoint(183, 34, 15, -145);
     _flowPoint(173, 34, 15, -143);
     _flowPoint(14, 37, 23, -75);
@@ -158,7 +161,7 @@ fun Flows._init_values() {
     _flowPoint(55, 64, 25, -16);
     _flowPoint(69, 84, 16, -57);
     _flowPoint(87, 86, 17, -66);
-    _flowPoint(83, 104, 15, -4);
+    _flowPoint(83, 104, 15, 110);
     _flowPoint(93, 106, 14, -61);
     _flowPoint(109, 108, 21, -77);
     _flowPoint(126, 109, 17, -79);
@@ -192,6 +195,11 @@ fun Flows._init_values() {
     _flowPoint(49, 230, 12, -48);
     _flowPoint(152, 188, 34, -163);
     _flowPoint(153, 166, 18, -174);
+    _flowPoint(312, 190, 21, 112);
+    _flowPoint(309, 180, 17, -21);
+    _flowPoint(165, 161, 13, -117);
+    _flowPoint(148, 226, 22, 113);
+    _flowPoint(202, 237, 19, 49);
 
 
 }
