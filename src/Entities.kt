@@ -129,6 +129,11 @@ class Area(xa: Int, ya: Int, xb: Int, yb: Int) {
     }
 }
 
+class AreaGroup() {
+    val areas = mutableListOf<Area>()
+
+}
+
 class Environment(var randomnessSize: Double) {
     var anchors: MutableList<Anchor> = mutableListOf()
     var flowLines: MutableList<FlowLine> = mutableListOf()

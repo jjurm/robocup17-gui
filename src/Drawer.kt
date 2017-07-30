@@ -14,7 +14,7 @@ fun toCY(posY: Int): Double = CANVAS_HEIGHT - posY * SCALE
 fun toCR(r: Double) = r * SCALE
 fun toCR(r: Int) = r * SCALE
 
-fun GraphicsContext.drawFlow(defs: DefinitionHolder, env: Environment) {
+fun GraphicsContext.drawFlow(defs: DefinitionHolder, env: Environment, areaGroup: AreaGroup) {
     val image = javafx.scene.image.Image(FileInputStream(FILENAME))
     drawImage(image, 0.0, 0.0, image.width, image.height, 0.0, 0.0, CANVAS_WIDTH, CANVAS_HEIGHT)
 
@@ -26,7 +26,7 @@ fun GraphicsContext.drawFlow(defs: DefinitionHolder, env: Environment) {
     }
 
     // Areas
-    for (area in defs.areas) {
+    for (area in areaGroup.areas) {
         stroke = Color.YELLOW
         lineWidth = 3.0
         drawArea(area)

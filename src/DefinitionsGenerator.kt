@@ -9,7 +9,11 @@ fun generateDefinitions(defs: DefinitionHolder) = defs.run {
         walls.forEach { pw.println("    _wall(${it.a.xI}, ${it.a.yI}, ${it.b.xI}, ${it.b.yI});") }
         pw.println()
 
-        areas.forEach { pw.println("    _area(${it.xa}, ${it.ya}, ${it.xb}, ${it.yb});") }
+        areaGroups.forEach { area ->
+            pw.println("    _area_group();")
+            area.areas.forEach { pw.println("    _area(${it.xa}, ${it.ya}, ${it.xb}, ${it.yb});") }
+            pw.println()
+        }
         pw.println()
 
         environments.forEach { env ->

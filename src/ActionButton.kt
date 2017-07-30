@@ -2,40 +2,40 @@ class ActionButton(val text: String, val action: Action) {
     //constructor(text: String, lambda: (env: Environment, point: Vector) -> Action?) : this(text, action(lambda))
 }
 
-fun afterSelectFlowPoint(description: String, handler: (FlowPoint, Vector) -> Unit) = action("select FlowPoint") { env, pos ->
+fun afterSelectFlowPoint(description: String, handler: (FlowPoint, Vector) -> Unit) = action("select FlowPoint") { env, _, pos ->
     val flowPoint = env.flowPoints.minBy { pos.distanceTo(it.point) } ?: return@action null
-    actionFinal(description) { _, point -> handler.invoke(flowPoint, point) }
+    actionFinal(description) { _, _, point -> handler.invoke(flowPoint, point) }
 }
 
 fun afterSelectFlowRouteAnchor(description: String, handler: (Anchor, Environment, Vector) -> Unit)
-        = action("select FlowRoute.Anchor") { env, lookupPoint ->
+        = action("select FlowRoute.Anchor") { env, _, lookupPoint ->
     val selectedAnchor = env.flowRoutes.map { route ->
         route.points.minBy { lookupPoint.distanceTo(it.point) }?.let { ValueTag(it, lookupPoint.distanceTo(it.point)) }
     }.filterNotNull().minBy { it.value }?.obj
     if (selectedAnchor == null) null
-    else actionFinal(description) { _, point -> handler.invoke(selectedAnchor, env, point) }
+    else actionFinal(description) { _, _, point -> handler.invoke(selectedAnchor, env, point) }
 }
 
 
 fun createActionButtons(defs: DefinitionHolder): List<ActionButton> {
     val list: MutableList<ActionButton> = mutableListOf()
 
-    list.add(ActionButton("Area -> new", action("select first point") { _, p1 ->
-        actionFinal("select second point") { _, p2 ->
-            defs.areas.add(Area(p1.xI, p1.yI, p2.xI, p2.yI))
+    list.add(ActionButton("Area -> new", action("select first point") { _, agroup, p1 ->
+        actionFinal("select second point") { _, _, p2 ->
+            agroup.areas.add(Area(p1.xI, p1.yI, p2.xI, p2.yI))
         }
     }))
-    list.add(ActionButton("Area -> delete", actionFinal("select Area") { _, p ->
-        val area = defs.areas.minBy { it.distanceToBorder(p) }
-        if (area != null) defs.areas.remove(area)
+    list.add(ActionButton("Area -> delete", actionFinal("select Area") { _, agroup, p ->
+        val area = agroup.areas.minBy { it.distanceToBorder(p) }
+        if (area != null) agroup.areas.remove(area)
     }))
 
-    list.add(ActionButton("Wall -> add", action("select first point") { _, pa ->
-        actionFinal("select second point") { _, pb ->
+    list.add(ActionButton("Wall -> add", action("select first point") { _, _, pa ->
+        actionFinal("select second point") { _, _, pb ->
             Flows.defs.walls.add(Wall(pa, pb))
         }
     }))
-    list.add(ActionButton("Wall -> remove", actionFinal("select wall") { _, p ->
+    list.add(ActionButton("Wall -> remove", actionFinal("select wall") { _, _, p ->
         defs.walls.minBy {
             it.distanceToPoint(p)
         }.let {
@@ -43,8 +43,8 @@ fun createActionButtons(defs: DefinitionHolder): List<ActionButton> {
         }
     }))
 
-    list.add(ActionButton("FlowPoint -> new", action("select point") { _, pCoords ->
-        actionFinal("select direction and radius") { env, target ->
+    list.add(ActionButton("FlowPoint -> new", action("select point") { _, _, pCoords ->
+        actionFinal("select direction and radius") { env, _, target ->
             env.flowPoints.add(FlowPoint(pCoords, pCoords.distanceTo(target) * 2, pCoords.directionTo(target)))
         }
     }))
@@ -57,29 +57,36 @@ fun createActionButtons(defs: DefinitionHolder): List<ActionButton> {
     list.add(ActionButton("FlowPoint -> edit direction", afterSelectFlowPoint("select direction") { flowPoint, directionPoint ->
         flowPoint.direction = flowPoint.point.directionTo(directionPoint)
     }))
-    list.add(ActionButton("FlowPoint -> delete", actionFinal("select FlowPoint") { env, point ->
+    list.add(ActionButton("FlowPoint -> delete", actionFinal("select FlowPoint") { env, _, point ->
         env.flowPoints.minBy { point.distanceTo(it.point) }.let { env.flowPoints.remove(it) }
     }))
 
 
-    list.add(ActionButton("FlowRoute.Anchor -> new at end", action("select FlowRoute") { env, lookupPoint ->
+    list.add(ActionButton("FlowRoute -> new", action("select point") { _, _, dst ->
+        actionFinal("select radius") { env, _, radiusPoint ->
+            val flowRoute = FlowRoute(false)
+            env.flowRoutes.add(flowRoute)
+            flowRoute.points.add(Anchor(dst, dst.distanceTo(radiusPoint) * 2))
+        }
+    }))
+    list.add(ActionButton("FlowRoute.Anchor -> new at end", action("select FlowRoute") { env, _, lookupPoint ->
         val selectedRoute = env.flowRoutes.map { route ->
             route.points.minBy { lookupPoint.distanceTo(it.point) }?.let { ValueTag(route, lookupPoint.distanceTo(it.point)) }
         }.filterNotNull().minBy { it.value }?.obj
         if (selectedRoute == null) null
-        else action("select point") { _, dst ->
-            actionFinal("select radius") { _, radiusPoint ->
+        else action("select point") { _, _, dst ->
+            actionFinal("select radius") { _, _, radiusPoint ->
                 selectedRoute.points.add(Anchor(dst, dst.distanceTo(radiusPoint) * 2))
             }
         }
     }))
-    list.add(ActionButton("FlowRoute.Anchor -> new before", action("select FlowRoute.Anchor") { env, lookupPoint ->
+    list.add(ActionButton("FlowRoute.Anchor -> new before", action("select FlowRoute.Anchor") { env, _, lookupPoint ->
         val selectedPair = env.flowRoutes.map { route ->
             route.points.minBy { lookupPoint.distanceTo(it.point) }?.let { DoubleValueTag(route.points, it, lookupPoint.distanceTo(it.point)) }
         }.filterNotNull().minBy { it.value }
         if (selectedPair == null) null
-        else action("select position") { _, pos ->
-            actionFinal("select radius") { _, radiusPoint ->
+        else action("select position") { _, _, pos ->
+            actionFinal("select radius") { _, _, radiusPoint ->
                 val index = selectedPair.list.indexOf(selectedPair.obj);
                 selectedPair.list.add(index, Anchor(pos, pos.distanceTo(radiusPoint) * 2))
             }
@@ -91,7 +98,7 @@ fun createActionButtons(defs: DefinitionHolder): List<ActionButton> {
     list.add(ActionButton("FlowRoute.Anchor -> edit radius", afterSelectFlowRouteAnchor("select radius") { anchor, _, pos ->
         anchor.radius = anchor.point.distanceTo(pos) * 2
     }))
-    list.add(ActionButton("FlowRoute.Anchor -> delete", actionFinal("select FlowRoute.Anchor") { env, lookupPoint ->
+    list.add(ActionButton("FlowRoute.Anchor -> delete", actionFinal("select FlowRoute.Anchor") { env, _, lookupPoint ->
         val selectedPair = env.flowRoutes.map { route ->
             route.points.minBy { lookupPoint.distanceTo(it.point) }?.let { DoubleValueTag(route.points, it, lookupPoint.distanceTo(it.point)) }
         }.filterNotNull().minBy { it.value }

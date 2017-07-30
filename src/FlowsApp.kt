@@ -36,6 +36,7 @@ class FlowsApp : Application() {
     val togglesMap = mutableMapOf<RadioButton, Action>()
     var nextAction: Action? = null
     var selectedEnv = Flows.defs.environments.first()
+    var selectedAreaGroup = Flows.defs.areaGroups.first()
 
     private fun addButton(actionButton: ActionButton) {
         val btn = RadioButton(actionButton.text)
@@ -48,17 +49,30 @@ class FlowsApp : Application() {
         primaryStage.title = "Flows"
         val root = HBox()
 
-        val menu = MenuButton("Environment 0")
-        menu.items.addAll((0..Flows.defs.environments.size - 1).map { index ->
+        val menuEnv = MenuButton("Environment 0")
+        menuEnv.items.addAll((0..Flows.defs.environments.size - 1).map { index ->
             MenuItem("Environment " + index).apply {
                 onAction = EventHandler {
                     selectedEnv = Flows.defs.environments[index]
-                    menu.text = "Environment " + index
+                    menuEnv.text = "Environment " + index
                     redraw()
                 }
             }
         })
-        buttons.children.add(menu)
+
+        val menuAreaGroup = MenuButton("Area group 0")
+        menuAreaGroup.items.addAll((0..Flows.defs.areaGroups.size -1).map { i->
+            MenuItem("Area group "+i).apply {
+                onAction = EventHandler {
+                    selectedAreaGroup = Flows.defs.areaGroups[i]
+                    menuAreaGroup.text = "Area group "+i
+                    redraw()
+                }
+            }
+        })
+
+        buttons.children.add(menuEnv)
+        buttons.children.add(menuAreaGroup)
         buttons.children.add(lblInfo)
         buttons.children.add(lblDescription)
 
@@ -70,7 +84,7 @@ class FlowsApp : Application() {
         canvas.onMouseClicked = EventHandler<MouseEvent> { e ->
             var p = Vector(e.sceneX.toInt() / SCALE, e.sceneY.toInt() / SCALE);
             p = Vector(p.x, Flows.MAP_HEIGHT - p.y)
-            nextAction = (nextAction ?: togglesMap[toggleGroup.selectedToggle])?.invoke(selectedEnv, p)
+            nextAction = (nextAction ?: togglesMap[toggleGroup.selectedToggle])?.invoke(selectedEnv, selectedAreaGroup, p)
             lblDescription.text = "Next action: " + (nextAction?.toString() ?: "(none)")
             if (nextAction != null) {
                 drawSmallMarker(p)
@@ -99,7 +113,7 @@ class FlowsApp : Application() {
     }
 
     private fun redraw() {
-        canvas.graphicsContext2D.drawFlow(Flows.defs, selectedEnv)
+        canvas.graphicsContext2D.drawFlow(Flows.defs, selectedEnv, selectedAreaGroup)
     }
 
     fun drawSmallMarker(pos: Vector) = with(canvas.graphicsContext2D) {

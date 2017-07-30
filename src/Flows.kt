@@ -55,8 +55,12 @@ object Flows {
         defs.environments.last().flowRoutes.last().points.add(Anchor(x, y, radius))
     }
 
+    fun _area_group() {
+        defs.areaGroups.add(AreaGroup())
+    }
+
     fun _area(x1: Int, y1: Int, x2: Int, y2: Int) {
-        defs.areas.add(Area(x1, y1, x2, y2));
+        defs.areaGroups.last().areas.add(Area(x1, y1, x2, y2));
     }
 
     fun calculateNearestFlowPoint(env: Environment, point: Vector): FlowPoint? {
